@@ -73,7 +73,7 @@ func getCurrentRevision(dir string) (int, error) {
 
 }
 
-func setCurrentRevision(revision int, dir string) error {
+func setCurrentRevision(rev int, dir string) error {
 
 	fname := ".last-revision"
 
@@ -85,7 +85,9 @@ func setCurrentRevision(revision int, dir string) error {
 		return err
 	}
 
-	_, err = io.WriteString(f, string(revision))
+	revision := strconv.Itoa(rev)
+
+	_, err = io.WriteString(f, revision)
 	if err != nil {
 		return err
 	}
