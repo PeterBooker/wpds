@@ -3,7 +3,7 @@ WPDS is a cross-platform CLI tool built with [Go](https://golang.org/). Slurps d
 
 Note: WPDS is still in early development and therefore may contain bugs or miss features.
 
-## Requirements
+## Dependencies
 
 None. WPDS is a self-contained executable.
 
