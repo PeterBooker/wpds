@@ -45,7 +45,7 @@ func getAllItems(dir string) {
 		os.Exit(1)
 	}
 
-	fetchItems(items, dir, 10)
+	fetchItems(items, dir, 100)
 
 	err = setCurrentRevision(revision, "plugins")
 	if err != nil {
@@ -97,7 +97,7 @@ func getUpdatedItems(dir string, rev int) {
 
 	removeDuplicates(&items)
 
-	fetchItems(items, dir, 10)
+	fetchItems(items, dir, 100)
 
 	err = setCurrentRevision(rev, "plugins")
 	if err != nil {
@@ -153,6 +153,8 @@ func getItem(item string) {
 		fmt.Printf("Error Downloading Plugin: %s\n", item)
 		return
 	}
+
+	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
 
