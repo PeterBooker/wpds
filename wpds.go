@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"regexp"
 	"sort"
 	"time"
 
@@ -25,7 +26,8 @@ const (
 )
 
 var (
-	wd string
+	wd                string
+	regexUpdatedItems = regexp.MustCompile("(?s)\\* ([^/A-Z ]+)[ /].*?\\((added|modified|deleted|moved|copied)\\)")
 )
 
 func main() {
@@ -59,7 +61,7 @@ func main() {
 	app.Commands = []cli.Command{
 		{
 			Name:    "download",
-			Aliases: []string{"u"},
+			Aliases: []string{"d"},
 			Usage:   "Download and update all WordPress Plugins.",
 			Flags: []cli.Flag{
 				cli.IntFlag{
@@ -88,18 +90,9 @@ func main() {
 
 						}
 
-						rev, err := getCurrentRevision("plugins")
-						rev = rev
+						err := getAllPlugins(wpAllPluginsListURL, c.Int("limit"))
 						if err != nil {
-							err := getAllPlugins(wpAllPluginsListURL, c.Int("limit"))
-							if err != nil {
-								return err
-							}
-						} else {
-							//err := getUpdatedPlugins(wpAllPluginsListURL, c.Int("limit"))
-							if err != nil {
-								return err
-							}
+							return cli.NewExitError(err.Error(), 1)
 						}
 
 						return nil
@@ -110,8 +103,23 @@ func main() {
 					Name:  "themes",
 					Usage: "Download all WordPress Themes.",
 					Action: func(c *cli.Context) error {
-						fmt.Println("removed task template: ", c.Args().First())
+
+						if isConfirmationRequired("plugins") {
+
+							confirm := getUserConfirmation()
+							if !confirm {
+								os.Exit(0)
+							}
+
+						}
+
+						err := getAllPlugins(wpAllPluginsListURL, c.Int("limit"))
+						if err != nil {
+							return cli.NewExitError(err.Error(), 1)
+						}
+
 						return nil
+
 					},
 				},
 			},
@@ -163,18 +171,11 @@ func main() {
 					Action: func(c *cli.Context) error {
 
 						rev, err := getCurrentRevision("plugins")
-						rev = rev
 						if err != nil {
-							err := getAllPlugins(wpAllPluginsListURL, c.Int("limit"))
-							if err != nil {
-								return err
-							}
-						} else {
-							//err := getUpdatedPlugins(wpAllPluginsListURL, c.Int("limit"))
-							if err != nil {
-								return err
-							}
+							return cli.NewExitError(err.Error(), 1)
 						}
+
+						rev = rev
 
 						return nil
 
@@ -184,8 +185,16 @@ func main() {
 					Name:  "themes",
 					Usage: "Update all WordPress Themes.",
 					Action: func(c *cli.Context) error {
-						fmt.Println("removed task template: ", c.Args().First())
+
+						rev, err := getCurrentRevision("plugins")
+						if err != nil {
+							return cli.NewExitError(err.Error(), 1)
+						}
+
+						rev = rev
+
 						return nil
+
 					},
 				},
 			},

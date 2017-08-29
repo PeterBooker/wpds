@@ -5,7 +5,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
-	"regexp"
 	"strconv"
 	"time"
 )
@@ -74,8 +73,7 @@ func getUpdatedItems(dir string, baseURL string) error {
 	bBytes, err := ioutil.ReadAll(resp.Body)
 	bString := string(bBytes)
 
-	regex := regexp.MustCompile("(?s)\\* ([^/A-Z ]+)[ /].*?\\((added|modified|deleted|moved|copied)\\)")
-	items := regex.FindAllString(bString, 1)
+	items := regexUpdatedItems.FindAllString(bString, 1)
 
 	removeDuplicates(&items)
 
