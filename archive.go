@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-func unzip(content []byte, dest string) error {
+func extract(content []byte, dest string) error {
 
 	br := bytes.NewReader(content)
 
