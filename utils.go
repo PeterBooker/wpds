@@ -29,9 +29,9 @@ func parseItemListHTML(r io.Reader) ([]string, int, error) {
 
 	revText := doc.Find("h2").Text()
 
-	rev := regexRevision.FindAllString(revText, 1)
+	rev := regexHTMLRevision.FindString(revText)
 
-	revision, err = strconv.Atoi(rev[0])
+	revision, err = strconv.Atoi(rev)
 	if err != nil {
 		return []string{}, 0, err
 	}
