@@ -6,6 +6,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"unicode"
 	"unicode/utf8"
@@ -15,22 +16,25 @@ import (
 
 // parseItemListHTML parses HTML for the Lists of all Plugins or Themes. Identifies the latest revision
 // number of the overall repository and a list containing the names of all items in that repository.
-func parseItemListHTML(r io.Reader) ([]string, string, error) {
+func parseItemListHTML(r io.Reader) ([]string, int, error) {
 
 	var items []string
-	var revision string
+	var revision int
 
 	doc, err := goquery.NewDocumentFromReader(r)
 
 	if err != nil {
-		return []string{}, "", nil
+		return []string{}, 0, nil
 	}
 
 	revText := doc.Find("h2").Text()
 
 	rev := regexRevision.FindAllString(revText, 1)
 
-	revision = rev[0]
+	revision, err = strconv.Atoi(rev[0])
+	if err != nil {
+		return []string{}, 0, err
+	}
 
 	doc.Find("ul").Each(func(i int, s *goquery.Selection) {
 
