@@ -8,12 +8,13 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"strconv"
 	"time"
 )
 
-func getLatestRevision(dir string) (string, error) {
+func getLatestRevision(dir string) (int, error) {
 
-	var revision string
+	var revision int
 	var rURL string
 
 	c := &http.Client{
@@ -29,11 +30,11 @@ func getLatestRevision(dir string) (string, error) {
 
 	resp, err := c.Get(rURL)
 	if err != nil {
-		return "", err
+		return 0, err
 	}
 
 	if resp.StatusCode != 200 {
-		return "", fmt.Errorf("Invalid HTTP Response")
+		return 0, fmt.Errorf("Invalid HTTP Response")
 	}
 
 	defer resp.Body.Close()
@@ -43,31 +44,38 @@ func getLatestRevision(dir string) (string, error) {
 	regex := regexp.MustCompile("[0-9]+")
 	revs := regex.FindAllString(bString, 1)
 
-	revision = revs[0]
-
-	return revision, nil
-
-}
-
-func getCurrentRevision(dir string) (string, error) {
-
-	var revision string
-
-	fname := ".last-revision"
-
-	path := filepath.Join(wd, dir, fname)
-
-	f, err := os.Open(path)
-	defer f.Close()
+	revision, err = strconv.Atoi(revs[0])
 	if err != nil {
-		return "", err
+		return 0, err
 	}
 
 	return revision, nil
 
 }
 
-func setCurrentRevision(revision string, dir string) error {
+func getCurrentRevision(dir string) (int, error) {
+
+	var revision int
+
+	fname := ".last-revision"
+
+	path := filepath.Join(wd, dir, fname)
+
+	data, err := ioutil.ReadFile(path)
+	if err != nil {
+		return 0, err
+	}
+
+	revision, err = strconv.Atoi(string(data))
+	if err != nil {
+		return 0, err
+	}
+
+	return revision, nil
+
+}
+
+func setCurrentRevision(revision int, dir string) error {
 
 	fname := ".last-revision"
 
@@ -79,7 +87,7 @@ func setCurrentRevision(revision string, dir string) error {
 		return err
 	}
 
-	_, err = io.WriteString(f, revision)
+	_, err = io.WriteString(f, string(revision))
 	if err != nil {
 		return err
 	}
