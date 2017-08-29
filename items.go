@@ -13,15 +13,48 @@ import (
 
 func getAllItems(dir string, baseURL string) {
 
-}
+	c := &http.Client{
+		Timeout: 30 * time.Second,
+	}
 
-func getUpdatedItems(dir string, revision int) {
+	var eURL string
 
-	rev, err := getCurrentRevision(dir)
+	switch dir {
+	case "plugins":
+		eURL = wpAllPluginsListURL
+	case "themes":
+		eURL = wpAllThemesListURL
+	}
+
+	resp, err := c.Get(eURL)
 	if err != nil {
-		fmt.Println("No revision found, cannot continue updating. Make sure the .last-revision file exists.")
+		fmt.Printf("Failed HTTP GET of updated %s.\n", dir)
 		os.Exit(1)
 	}
+
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		fmt.Println("Invalid HTTP Response")
+		os.Exit(1)
+	}
+
+	items, revision, err := parseItemListHTML(resp.Body)
+	if err != nil {
+		fmt.Println("Failed parsing HTML response. Could not get items list.")
+		os.Exit(1)
+	}
+
+	fetchItems(items, dir, 10)
+
+	err = setCurrentRevision(revision, "plugins")
+	if err != nil {
+		fmt.Println("The current revision could not be saved, updating will not work.")
+	}
+
+}
+
+func getUpdatedItems(dir string, rev int) {
 
 	lrev, err := getLatestRevision(dir)
 	if err != nil {
@@ -50,20 +83,26 @@ func getUpdatedItems(dir string, revision int) {
 		os.Exit(1)
 	}
 
+	defer resp.Body.Close()
+
 	if resp.StatusCode != 200 {
 		fmt.Println("Invalid HTTP Response")
 		os.Exit(1)
 	}
 
-	defer resp.Body.Close()
 	bBytes, err := ioutil.ReadAll(resp.Body)
 	bString := string(bBytes)
 
-	items := regexUpdatedItems.FindAllString(bString, 1)
+	items := regexUpdatedItems.FindAllString(bString, -1)
 
 	removeDuplicates(&items)
 
 	fetchItems(items, dir, 10)
+
+	err = setCurrentRevision(rev, "plugins")
+	if err != nil {
+		fmt.Println("The current revision could not be saved, updating will not work.")
+	}
 
 }
 
