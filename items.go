@@ -11,7 +11,7 @@ import (
 	"gopkg.in/cheggaaa/pb.v1"
 )
 
-func getAllItems(dir string, baseURL string) {
+func getAllItems(dir string) {
 
 	c := &http.Client{
 		Timeout: 30 * time.Second,
