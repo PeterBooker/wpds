@@ -3,11 +3,50 @@ package main
 import (
 	"fmt"
 	"io"
+	"net/url"
 	"os"
 	"path/filepath"
+	"strings"
 	"unicode"
 	"unicode/utf8"
+
+	"github.com/PuerkitoBio/goquery"
 )
+
+// parseItemListHTML parses HTML for the Lists of all Plugins or Themes. Identifies the latest revision
+// number of the overall repository and a list containing the names of all items in that repository.
+func parseItemListHTML(r io.Reader) ([]string, string, error) {
+
+	var items []string
+	var revision string
+
+	doc, err := goquery.NewDocumentFromReader(r)
+
+	if err != nil {
+		return []string{}, "", nil
+	}
+
+	revText := doc.Find("h2").Text()
+
+	rev := regexRevision.FindAllString(revText, 1)
+
+	revision = rev[0]
+
+	doc.Find("ul").Each(func(i int, s *goquery.Selection) {
+
+		doc.Find("a").Each(func(i int, s *goquery.Selection) {
+
+			name := s.Text()
+			name = strings.TrimSuffix(name, "/")
+			items = append(items, name)
+
+		})
+
+	})
+
+	return items, revision, nil
+
+}
 
 // isConfirmationRequired checks if files already exist in the destination and the user
 // needs to confirm beginning a fresh download.
@@ -88,5 +127,17 @@ func removeDuplicates(items *[]string) {
 		}
 	}
 	*items = (*items)[:i]
+
+}
+
+// Properly encodes the URL for compatibility with special characters
+// e.g. 新浪微博 and ЯндексФотки
+func encodeURL(rawURL string) string {
+
+	u, _ := url.Parse(rawURL)
+
+	URL := u.String()
+
+	return URL
 
 }
