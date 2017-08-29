@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"os"
 	"regexp"
+	"runtime"
+	"runtime/pprof"
 	"sort"
 	"time"
 
@@ -57,6 +59,19 @@ func main() {
 
 		return nil
 
+	}
+
+	app.Flags = []cli.Flag{
+		cli.StringFlag{
+			Name:  "cpuprofile",
+			Value: "",
+			Usage: "Write CPU profiling to file.",
+		},
+		cli.StringFlag{
+			Name:  "memprofile",
+			Value: "",
+			Usage: "Write Memory profiling to file.",
+		},
 	}
 
 	// Setup Commands and Sub Commands
@@ -120,6 +135,31 @@ func main() {
 				},
 			},
 			Before: func(c *cli.Context) error {
+
+				if cprof := c.GlobalString("cpuprofile"); cprof != "" {
+
+					f, err := os.Create(cprof)
+					if err != nil {
+						panic(err)
+					}
+					pprof.StartCPUProfile(f)
+					defer pprof.StopCPUProfile()
+
+				}
+
+				if mprof := c.GlobalString("memprofile"); mprof != "" {
+
+					f, err := os.Create(mprof)
+					if err != nil {
+						panic(err)
+					}
+					runtime.GC()
+					if err := pprof.WriteHeapProfile(f); err != nil {
+						panic(err)
+					}
+					f.Close()
+
+				}
 
 				started := time.Now()
 
@@ -189,6 +229,31 @@ func main() {
 				},
 			},
 			Before: func(c *cli.Context) error {
+
+				if cprof := c.GlobalString("cpuprofile"); cprof != "" {
+
+					f, err := os.Create(cprof)
+					if err != nil {
+						panic(err)
+					}
+					pprof.StartCPUProfile(f)
+					defer pprof.StopCPUProfile()
+
+				}
+
+				if mprof := c.GlobalString("memprofile"); mprof != "" {
+
+					f, err := os.Create(mprof)
+					if err != nil {
+						panic(err)
+					}
+					runtime.GC()
+					if err := pprof.WriteHeapProfile(f); err != nil {
+						panic(err)
+					}
+					f.Close()
+
+				}
 
 				started := time.Now()
 
