@@ -91,10 +91,7 @@ func main() {
 
 						}
 
-						err := getAllPlugins(wpAllPluginsListURL, c.Int("limit"))
-						if err != nil {
-							return cli.NewExitError(err.Error(), 1)
-						}
+						getAllItems("plugins")
 
 						return nil
 
@@ -105,7 +102,7 @@ func main() {
 					Usage: "Download all WordPress Themes.",
 					Action: func(c *cli.Context) error {
 
-						if isConfirmationRequired("plugins") {
+						if isConfirmationRequired("themes") {
 
 							confirm := getUserConfirmation()
 							if !confirm {
@@ -114,10 +111,7 @@ func main() {
 
 						}
 
-						err := getAllPlugins(wpAllPluginsListURL, c.Int("limit"))
-						if err != nil {
-							return cli.NewExitError(err.Error(), 1)
-						}
+						getAllItems("themes")
 
 						return nil
 
@@ -140,12 +134,6 @@ func main() {
 				return nil
 			},
 			Action: func(c *cli.Context) error {
-
-				err := getAllPlugins(wpAllPluginsListURL, c.Int("limit"))
-				if err != nil {
-					return err
-				}
-
 				return nil
 			},
 		},
@@ -215,12 +203,6 @@ func main() {
 				return nil
 			},
 			Action: func(c *cli.Context) error {
-
-				err := getAllPlugins(wpAllPluginsListURL, c.Int("limit"))
-				if err != nil {
-					return err
-				}
-
 				return nil
 			},
 		},
@@ -242,9 +224,9 @@ func main() {
 							return cli.NewExitError("Please specify a search pattern.", 20)
 						}
 
-						results := startSearch(pattern)
+						//results := startSearch(pattern)
 
-						outputResults(results, pattern, "stdout")
+						//outputResults(results, pattern, "stdout")
 
 						return nil
 					},
@@ -259,9 +241,9 @@ func main() {
 							return cli.NewExitError("Please specify a search pattern.", 20)
 						}
 
-						results := startSearch(pattern)
+						//results := startSearch(pattern)
 
-						outputResults(results, pattern, "stdout")
+						//outputResults(results, pattern, "stdout")
 
 						return nil
 					},
