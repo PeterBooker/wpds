@@ -1,25 +1,25 @@
 # WordPress-Directory-Slurper
-WPSlurper is a cross-platform CLI tool built with [Go](https://golang.org/). Slurps down the latest version of every Plugin and/or Theme in the WordPress Directory. Comes with inbuilt searching and formatted search summaries. Based on the Plugin and Theme Directory Slurpers by [markjaquith](https://github.com/markjaquith/WordPress-Plugin-Directory-Slurper), [ipstenu](https://github.com/Ipstenu/WordPress-Theme-Directory-Slurper) and [chriscct7](https://github.com/chriscct7/WordPress-Plugin-Directory-Slurper/).
+WPDS is a cross-platform CLI tool built with [Go](https://golang.org/). Slurps down the latest version of every Plugin and/or Theme in the WordPress Directory. Comes with inbuilt searching and formatted search summaries. Based on the Plugin and Theme Directory Slurpers by [markjaquith](https://github.com/markjaquith/WordPress-Plugin-Directory-Slurper), [ipstenu](https://github.com/Ipstenu/WordPress-Theme-Directory-Slurper) and [chriscct7](https://github.com/chriscct7/WordPress-Plugin-Directory-Slurper/).
 
-Note: WPSlurper is still in early development and therefore may contain bugs or miss features.
+Note: WPDS is still in early development and therefore may contain bugs or miss features.
 
 ## Requirements
 
-None. WPSlurper is a self-contained executable.
+None. WPDS is a self-contained executable.
 
 ## Install & Usage
 
 Download the relevant file for your operating system from the [releases](#todo) page, then either run it from the directory you want it to work in or put it into your PATH and it will use the current working directory.
 
-Plugins: `wpslurper update plugins`
-Themes: `wpslurper update themes`
+Plugins: `wpds update plugins`
+Themes: `wpds update themes`
 
 ## Examples
 
 ### Slurp Plugin Directory
 
 ```
-wpslurper update plugins
+wpds update plugins
 ```
 
 This will either download the entire plugin directory or update the existing files using the latest revision found in `/plugins/.last-revision`.
@@ -27,7 +27,7 @@ This will either download the entire plugin directory or update the existing fil
 ### Slurp Theme Directory
 
 ```
-wpslurper update plugins
+wpds update plugins
 ```
 
 This will either download the entire theme directory or update the existing files using the latest revision found in `/themes/.last-revision`.
@@ -45,7 +45,7 @@ This will either download the entire theme directory or update the existing file
 
 ### Why did you remake the previous tools in Go?
 
-Basing the CLI tool in Go removes any requirements and provides full cross platform support, making it easier for everyone to use.
+Building the CLI tool in Go removes any requirements and provides full cross platform support, making it easier for everyone to use.
 
 It also allowed me to build the search functionality into the tool, removing further requirements.
 
@@ -67,7 +67,7 @@ As of February 2017, the script will download about 14 GB of zip files. When unp
 ### Something went wrong, how do I do a partial update?
 
 The last successful update revision number is stored in `plugins/.last-revision`.
-You can just overwrite that and the next `wpslurper update` will start after that revision.
+You can just overwrite that and the next `wpds update plugins` will start after that revision.
 
 ### What is this thing actually doing to my computer?
 
