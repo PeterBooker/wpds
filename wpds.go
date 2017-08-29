@@ -15,8 +15,8 @@ const (
 	wpAllThemesListURL         = "http://themes.svn.wordpress.org/"
 	wpLatestPluginsRevisionURL = "http://plugins.trac.wordpress.org/log/?format=changelog&stop_rev=HEAD"
 	wpLatestThemesRevisionURL  = "http://themes.trac.wordpress.org/log/?format=changelog&stop_rev=HEAD"
-	wpPluginChangelogURL       = "https://plugins.trac.wordpress.org/log/?verbose=on&mode=follow_copy&format=changelog&rev=%s&limit=%s"
-	wpThemeChangelogURL        = "https://themes.trac.wordpress.org/log/?verbose=on&mode=follow_copy&format=changelog&rev=%s&limit=%s"
+	wpPluginChangelogURL       = "https://plugins.trac.wordpress.org/log/?verbose=on&mode=follow_copy&format=changelog&rev=%d&limit=%d"
+	wpThemeChangelogURL        = "https://themes.trac.wordpress.org/log/?verbose=on&mode=follow_copy&format=changelog&rev=%d&limit=%d"
 	wpPluginDownloadURL        = "http://downloads.wordpress.org/plugin/%s.latest-stable.zip?nostats=1"
 	wpThemeDownloadURL         = "http://downloads.wordpress.org/theme/%s.latest-stable.zip?nostats=1"
 	wpPluginReadmeURL          = "https://plugins.svn.wordpress.org/%s/trunk/readme.txt"
@@ -26,8 +26,9 @@ const (
 )
 
 var (
-	wd                string
+	regexRevision     = regexp.MustCompile("[0-9]+")
 	regexUpdatedItems = regexp.MustCompile("(?s)\\* ([^/A-Z ]+)[ /].*?\\((added|modified|deleted|moved|copied)\\)")
+	wd                string
 )
 
 func main() {
@@ -35,7 +36,7 @@ func main() {
 	app := cli.NewApp()
 	app.Name = "WPDS"
 	app.Usage = "WPDS is a CLI tool for mass WordPress Plugin downloads."
-	app.Version = "0.0.1"
+	app.Version = "0.5.0"
 	app.Compiled = time.Now()
 	app.Authors = []cli.Author{
 		cli.Author{
@@ -51,7 +52,7 @@ func main() {
 
 		fmt.Printf("Name: %s Version: %s\n", c.App.Name, c.App.Version)
 		fmt.Printf("Description: %s\n", c.App.Usage)
-		fmt.Println("Type \"slurper -help\" for more information.")
+		fmt.Println("Type \"wpds -help\" for more information.")
 
 		return nil
 
@@ -175,7 +176,7 @@ func main() {
 							return cli.NewExitError(err.Error(), 1)
 						}
 
-						rev = rev
+						getUpdatedItems("plugins", rev)
 
 						return nil
 
@@ -186,12 +187,12 @@ func main() {
 					Usage: "Update all WordPress Themes.",
 					Action: func(c *cli.Context) error {
 
-						rev, err := getCurrentRevision("plugins")
+						rev, err := getCurrentRevision("themes")
 						if err != nil {
 							return cli.NewExitError(err.Error(), 1)
 						}
 
-						rev = rev
+						getUpdatedItems("themes", rev)
 
 						return nil
 

@@ -5,15 +5,17 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
-	"strconv"
+	"path/filepath"
 	"time"
+
+	"gopkg.in/cheggaaa/pb.v1"
 )
 
 func getAllItems(dir string, baseURL string) {
 
 }
 
-func getUpdatedItems(dir string, baseURL string) error {
+func getUpdatedItems(dir string, revision int) {
 
 	rev, err := getCurrentRevision(dir)
 	if err != nil {
@@ -27,19 +29,7 @@ func getUpdatedItems(dir string, baseURL string) error {
 		os.Exit(1)
 	}
 
-	irev, err := strconv.Atoi(rev)
-	if err != nil {
-		fmt.Println("Current revision does not appear to be a valid number.")
-		os.Exit(1)
-	}
-
-	ilrev, err := strconv.Atoi(lrev)
-	if err != nil {
-		fmt.Println("Latest revision does not appear to be a valid number.")
-		os.Exit(1)
-	}
-
-	rdiff := ilrev - irev
+	rdiff := lrev - rev
 
 	c := &http.Client{
 		Timeout: 30 * time.Second,
@@ -49,24 +39,20 @@ func getUpdatedItems(dir string, baseURL string) error {
 
 	switch dir {
 	case "plugins":
-		eURL, err = encodeURL(fmt.Sprintf(wpPluginChangelogURL, lrev, string(rdiff)))
-		if err != nil {
-			return err
-		}
+		eURL = encodeURL(fmt.Sprintf(wpPluginChangelogURL, lrev, rdiff))
 	case "themes":
-		eURL, err = encodeURL(fmt.Sprintf(wpThemeChangelogURL, lrev, string(rdiff)))
-		if err != nil {
-			return err
-		}
+		eURL = encodeURL(fmt.Sprintf(wpThemeChangelogURL, lrev, rdiff))
 	}
 
 	resp, err := c.Get(eURL)
 	if err != nil {
-		return err
+		fmt.Printf("Failed HTTP GET of updated %s.\n", dir)
+		os.Exit(1)
 	}
 
 	if resp.StatusCode != 200 {
-		return fmt.Errorf("Invalid HTTP Response")
+		fmt.Println("Invalid HTTP Response")
+		os.Exit(1)
 	}
 
 	defer resp.Body.Close()
@@ -77,6 +63,75 @@ func getUpdatedItems(dir string, baseURL string) error {
 
 	removeDuplicates(&items)
 
+	fetchItems(items, dir, 10)
+
+}
+
+func fetchItems(items []string, dir string, limit int) error {
+
+	iCount := len(items)
+
+	bar := pb.StartNew(iCount)
+
+	limiter := make(chan struct{}, limit)
+
+	// Make Plugins Dir ready for extracting plugins
+	path := filepath.Join(wd, dir)
+	err := mkdir(path)
+	if err != nil {
+		return err
+	}
+
+	for _, v := range items {
+
+		// Will block if more than max Goroutines already running.
+		limiter <- struct{}{}
+		bar.Increment()
+
+		go func(name string) {
+			getItem(name)
+			<-limiter
+		}(v)
+
+	}
+
+	bar.FinishPrint(fmt.Sprintf("Completed download of %d Plugins.", iCount))
+
 	return nil
+
+}
+
+func getItem(item string) {
+
+	c := &http.Client{
+		Timeout: 60 * time.Second,
+	}
+
+	eURL := encodeURL(fmt.Sprintf(wpPluginDownloadURL, item))
+
+	resp, err := c.Get(eURL)
+	if err != nil {
+		fmt.Printf("Error Downloading Plugin: %s\n", item)
+		return
+	}
+
+	if resp.StatusCode != 200 {
+
+		if resp.StatusCode == 404 {
+			return
+		}
+
+		fmt.Printf("Error Downloading Plugin: %s Status Code: %d\n", item, resp.StatusCode)
+		return
+	}
+
+	content, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		fmt.Printf("Error reading Get request body for Plugin: %s\n", item)
+		fmt.Println(err)
+		return
+	}
+
+	err = extract(content, item)
 
 }
