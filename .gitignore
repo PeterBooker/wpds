@@ -10,8 +10,9 @@
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
 
-# Ignore goreleaser output folder
+# Ignore goreleaser related files folder
 /dist/
+releasenotes.md
 
 # WordPress Slurper Created Files
 /plugins/
