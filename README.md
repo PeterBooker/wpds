@@ -9,7 +9,7 @@ None. WPDS is a self-contained executable.
 
 ## Install & Usage
 
-Download the relevant file for your operating system from the [releases](#todo) page, then either run it from the directory you want it to work in or put it into your PATH and it will use the current working directory.
+Download the relevant file for your operating system from the [releases](https://github.com/PeterBooker/WordPress-Directory-Slurper/releases) page, then either run it from the directory you want it to work in or put it into your PATH and it will use the current working directory.
 
 Plugins: `wpds update plugins`
 Themes: `wpds update themes`
