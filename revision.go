@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"regexp"
 	"strconv"
 	"time"
 )
@@ -41,10 +40,9 @@ func getLatestRevision(dir string) (int, error) {
 	bBytes, err := ioutil.ReadAll(resp.Body)
 	bString := string(bBytes)
 
-	regex := regexp.MustCompile("[0-9]+")
-	revs := regex.FindAllString(bString, 1)
+	revs := regexRevision.FindAllStringSubmatch(bString, 1)
 
-	revision, err = strconv.Atoi(revs[0])
+	revision, err = strconv.Atoi(revs[0][1])
 	if err != nil {
 		return 0, err
 	}
