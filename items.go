@@ -8,10 +8,11 @@ import (
 	"path/filepath"
 	"time"
 
+	"github.com/urfave/cli"
 	"gopkg.in/cheggaaa/pb.v1"
 )
 
-func getAllItems(dir string) {
+func getAllItems(ctx *cli.Context, dir string) {
 
 	c := &http.Client{
 		Timeout: 30 * time.Second,
@@ -45,7 +46,7 @@ func getAllItems(dir string) {
 		os.Exit(1)
 	}
 
-	fetchItems(items, dir, 100)
+	fetchItems(items, dir, ctx.Int("limit"))
 
 	err = setCurrentRevision(revision, "plugins")
 	if err != nil {
@@ -54,7 +55,7 @@ func getAllItems(dir string) {
 
 }
 
-func getUpdatedItems(dir string, rev int) {
+func getUpdatedItems(ctx *cli.Context, dir string, rev int) {
 
 	lrev, err := getLatestRevision(dir)
 	if err != nil {
@@ -97,7 +98,7 @@ func getUpdatedItems(dir string, rev int) {
 
 	removeDuplicates(&items)
 
-	fetchItems(items, dir, 100)
+	fetchItems(items, dir, ctx.Int("limit"))
 
 	err = setCurrentRevision(rev, "plugins")
 	if err != nil {

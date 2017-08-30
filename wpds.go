@@ -107,7 +107,7 @@ func main() {
 
 						}
 
-						getAllItems("plugins")
+						getAllItems(c, "plugins")
 
 						return nil
 
@@ -127,7 +127,7 @@ func main() {
 
 						}
 
-						getAllItems("themes")
+						getAllItems(c, "themes")
 
 						return nil
 
@@ -205,7 +205,7 @@ func main() {
 							return cli.NewExitError(err.Error(), 1)
 						}
 
-						getUpdatedItems("plugins", rev)
+						getUpdatedItems(c, "plugins", rev)
 
 						return nil
 
@@ -221,7 +221,7 @@ func main() {
 							return cli.NewExitError(err.Error(), 1)
 						}
 
-						getUpdatedItems("themes", rev)
+						getUpdatedItems(c, "themes", rev)
 
 						return nil
 
