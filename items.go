@@ -54,7 +54,9 @@ func getAllItems(ctx *cli.Context, dir string) {
 		fmt.Println("The current revision could not be saved, updating will not work.")
 	}
 
-	notify.SendNotification("WPDS", "Download Task Completed.")
+	elapsed := time.Since(ctx.App.Metadata["started"].(time.Time))
+
+	notify.SendNotification("WPDS", "Download Task Completed.", elapsed)
 
 }
 
@@ -113,7 +115,9 @@ func getUpdatedItems(ctx *cli.Context, dir string, rev int) {
 		fmt.Println("The current revision could not be saved, updating will not work.")
 	}
 
-	notify.SendNotification("WPDS", "Update Task Completed.")
+	elapsed := time.Since(ctx.App.Metadata["started"].(time.Time))
+
+	notify.SendNotification("WPDS", "Update Task Completed.", elapsed)
 
 }
 
