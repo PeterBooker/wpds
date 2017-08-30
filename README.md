@@ -40,6 +40,7 @@ This will either download the entire theme directory or update the existing file
 - [x] Update the Plugin Directory files
 - [x] Download the Theme Directory
 - [x] Update the Theme Directory files
+- [x] Desktop Notifications
 - [ ] In-built Searching
 - [ ] Search Summary Generation
 
