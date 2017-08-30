@@ -98,6 +98,38 @@ func getUserConfirmation() bool {
 
 }
 
+func itemFetchFailure(item string, dir string) error {
+
+	fname := ".failed-downloads"
+
+	path := filepath.Join(wd, dir, fname)
+
+	if _, err := os.Stat("/path/to/whatever"); os.IsNotExist(err) {
+
+		f, err := os.Create(path)
+		defer f.Close()
+		if err != nil {
+			return err
+		}
+
+	}
+
+	f, err := os.OpenFile(item, os.O_APPEND, 0777)
+	if err != nil {
+		return err
+	}
+
+	defer f.Close()
+
+	_, err = f.WriteString(item + "\n")
+	if err != nil {
+		return err
+	}
+
+	return nil
+
+}
+
 // isDirEmpty checks if the given directory is empty or not.
 func isDirEmpty(dir string) (bool, error) {
 

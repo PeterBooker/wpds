@@ -66,6 +66,11 @@ func getUpdatedItems(ctx *cli.Context, dir string, rev int) {
 		os.Exit(1)
 	}
 
+	if rev == lrev {
+		fmt.Printf("You are currently at the latest revision: %d. No update needed.\n", rev)
+		os.Exit(1)
+	}
+
 	rdiff := lrev - rev
 
 	c := &http.Client{
@@ -133,56 +138,60 @@ func fetchItems(items []string, dir string, limit int) error {
 		limiter <- struct{}{}
 		bar.Increment()
 
-		go func(name string) {
-			getItem(name)
+		go func(name string, dir string) {
+			getItem(name, dir)
 			<-limiter
-		}(v)
+		}(v, dir)
 
 	}
 
-	bar.FinishPrint(fmt.Sprintf("Completed download of %d Plugins.", iCount))
+	bar.FinishPrint(fmt.Sprintf("Completed download of %d Items.", iCount))
 
 	return nil
 
 }
 
-func getItem(item string) {
+func getItem(item string, dir string) {
 
 	c := &http.Client{
 		Timeout: 60 * time.Second,
 	}
 
-	eURL := encodeURL(fmt.Sprintf(wpPluginDownloadURL, item))
+	var eURL string
+
+	switch dir {
+	case "plugins":
+		eURL = encodeURL(fmt.Sprintf(wpPluginDownloadURL, item))
+	case "themes":
+		eURL = encodeURL(fmt.Sprintf(wpThemeDownloadURL, item))
+	}
 
 	resp, err := c.Get(eURL)
 	if err != nil {
-		fmt.Printf("Error Downloading Plugin: %s\n", item)
+		//fmt.Printf("Error Downloading Item: %s\n", item)
+		itemFetchFailure(item, dir)
 		return
 	}
 
 	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
-
-		if resp.StatusCode == 404 {
-			return
-		}
-
-		fmt.Printf("Error Downloading Plugin: %s Status Code: %d\n", item, resp.StatusCode)
+		//fmt.Printf("Error Downloading Item: %s Status Code: %d\n", item, resp.StatusCode)
+		itemFetchFailure(item, dir)
 		return
 	}
 
 	content, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		fmt.Printf("Error reading Get request body for item: %s\n", item)
-		fmt.Println(err)
+		//fmt.Printf("Error reading Get request body for item: %s\n", item)
+		itemFetchFailure(item, dir)
 		return
 	}
 
 	err = extract(content, item)
 	if err != nil {
-		fmt.Printf("Error extracting files for: %s\n", item)
-		fmt.Println(err)
+		//fmt.Printf("Error extracting files for: %s\n", item)
+		itemFetchFailure(item, dir)
 		return
 	}
 
