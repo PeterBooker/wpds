@@ -61,6 +61,7 @@ func main() {
 
 	}
 
+	// Support for inbuilt performance monitoring
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
 			Name:  "cpuprofile",
@@ -80,22 +81,22 @@ func main() {
 			Name:    "download",
 			Aliases: []string{"d"},
 			Usage:   "Download and update all WordPress Plugins.",
-			Flags: []cli.Flag{
-				cli.IntFlag{
-					Name:  "limit, l",
-					Value: 10,
-					Usage: "Number of simultaneous downloads.",
-				},
-				cli.StringFlag{
-					Name:  "type, t",
-					Value: "all",
-					Usage: "Type of files to download.",
-				},
-			},
 			Subcommands: []cli.Command{
 				{
 					Name:  "plugins",
 					Usage: "Download all WordPress Plugins.",
+					Flags: []cli.Flag{
+						cli.IntFlag{
+							Name:  "limit, l",
+							Value: 10,
+							Usage: "Number of simultaneous downloads.",
+						},
+						cli.StringFlag{
+							Name:  "type, t",
+							Value: "all",
+							Usage: "Type of files to download.",
+						},
+					},
 					Action: func(c *cli.Context) error {
 
 						if isConfirmationRequired("plugins") {
@@ -116,6 +117,18 @@ func main() {
 				{
 					Name:  "themes",
 					Usage: "Download all WordPress Themes.",
+					Flags: []cli.Flag{
+						cli.IntFlag{
+							Name:  "limit, l",
+							Value: 10,
+							Usage: "Number of simultaneous downloads.",
+						},
+						cli.StringFlag{
+							Name:  "type, t",
+							Value: "all",
+							Usage: "Type of files to download.",
+						},
+					},
 					Action: func(c *cli.Context) error {
 
 						if isConfirmationRequired("themes") {
@@ -182,22 +195,22 @@ func main() {
 			Name:    "update",
 			Aliases: []string{"u"},
 			Usage:   "Update all WordPress Plugins.",
-			Flags: []cli.Flag{
-				cli.IntFlag{
-					Name:  "limit, l",
-					Value: 10,
-					Usage: "Number of simultaneous downloads.",
-				},
-				cli.StringFlag{
-					Name:  "type, t",
-					Value: "all",
-					Usage: "Type of files to download.",
-				},
-			},
 			Subcommands: []cli.Command{
 				{
 					Name:  "plugins",
 					Usage: "Update all WordPress Plugins.",
+					Flags: []cli.Flag{
+						cli.IntFlag{
+							Name:  "limit, l",
+							Value: 10,
+							Usage: "Number of simultaneous downloads.",
+						},
+						cli.StringFlag{
+							Name:  "type, t",
+							Value: "all",
+							Usage: "Type of files to download.",
+						},
+					},
 					Action: func(c *cli.Context) error {
 
 						rev, err := getCurrentRevision("plugins")
@@ -214,6 +227,18 @@ func main() {
 				{
 					Name:  "themes",
 					Usage: "Update all WordPress Themes.",
+					Flags: []cli.Flag{
+						cli.IntFlag{
+							Name:  "limit, l",
+							Value: 10,
+							Usage: "Number of simultaneous downloads.",
+						},
+						cli.StringFlag{
+							Name:  "type, t",
+							Value: "all",
+							Usage: "Type of files to download.",
+						},
+					},
 					Action: func(c *cli.Context) error {
 
 						rev, err := getCurrentRevision("themes")
