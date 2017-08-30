@@ -103,7 +103,7 @@ func getUpdatedItems(ctx *cli.Context, dir string, rev int) {
 
 	fetchItems(items, dir, ctx.Int("limit"))
 
-	err = setCurrentRevision(rev, "plugins")
+	err = setCurrentRevision(lrev, "plugins")
 	if err != nil {
 		fmt.Println("The current revision could not be saved, updating will not work.")
 	}
