@@ -168,11 +168,16 @@ func getItem(item string) {
 
 	content, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		fmt.Printf("Error reading Get request body for Plugin: %s\n", item)
+		fmt.Printf("Error reading Get request body for item: %s\n", item)
 		fmt.Println(err)
 		return
 	}
 
 	err = extract(content, item)
+	if err != nil {
+		fmt.Printf("Error extracting files for: %s\n", item)
+		fmt.Println(err)
+		return
+	}
 
 }

@@ -30,7 +30,7 @@ const (
 var (
 	regexRevision     = regexp.MustCompile(`\[(\d*)\]`)
 	regexHTMLRevision = regexp.MustCompile(`[0-9]+`)
-	regexUpdatedItems = regexp.MustCompile(`(?s)\* ([^/A-Z ]+)[ /].*?\((added|modified|deleted|moved|copied)\)`)
+	regexUpdatedItems = regexp.MustCompile(`\* ([^/A-Z ]+)`)
 	wd                string
 )
 

@@ -126,7 +126,7 @@ func removeDuplicates(items *[]string) {
 	for k, v := range *items {
 		if !found[v] {
 			found[v] = true
-			(*items)[i] = (*items)[k]
+			(*items)[i] = strings.TrimPrefix((*items)[k], "* ")
 			i++
 		}
 	}
