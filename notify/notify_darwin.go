@@ -13,7 +13,7 @@ const (
 func SendNotification(title string, message string, elapsed time.Duration) {
 
 	if elapsed < notificationBreakpoint {
-		return nil
+		return
 	}
 
 	notification := notifier.Notification{
@@ -23,6 +23,8 @@ func SendNotification(title string, message string, elapsed time.Duration) {
 		Sound:   notifier.Glass,
 	}
 
-	return notification.Push()
+	notification.Push()
+
+	return
 
 }
