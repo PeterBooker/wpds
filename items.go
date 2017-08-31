@@ -203,7 +203,7 @@ func getItem(item string, dir string) {
 		return
 	}
 
-	err = extract(content, item)
+	err = extract(content, resp.ContentLength, item)
 	if err != nil {
 		//fmt.Printf("Error extracting files for: %s\n", item)
 		itemFetchFailure(item, dir)

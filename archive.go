@@ -10,11 +10,9 @@ import (
 	"strings"
 )
 
-func extract(content []byte, dest string) error {
+func extract(content []byte, length int64, dest string) error {
 
-	br := bytes.NewReader(content)
-
-	zr, err := zip.NewReader(br, int64(br.Len()))
+	zr, err := zip.NewReader(bytes.NewReader(content), length)
 	if err != nil {
 		return err
 	}
