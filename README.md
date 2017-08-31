@@ -9,30 +9,27 @@ Note: WPDS is still in early development and therefore may contain bugs or miss 
 
 None. WPDS is a self-contained executable.
 
-## Install & Usage
+## Install
 
 Download the relevant file for your operating system from the [releases](https://github.com/PeterBooker/WordPress-Directory-Slurper/releases) page, then either run it from the directory you want it to work in or put it into your PATH and it will use the current working directory.
 
-Plugins: `wpds update plugins`
-Themes: `wpds update themes`
-
 ## Examples
 
-### Slurp Plugin Directory
+### Download Plugin Directory
+
+```
+wpds download plugins
+```
+
+This will download the entire plugin directory.
+
+### Update Plugin Directory
 
 ```
 wpds update plugins
 ```
 
-This will either download the entire plugin directory or update the existing files using the latest revision found in `/plugins/.last-revision`.
-
-### Slurp Theme Directory
-
-```
-wpds update plugins
-```
-
-This will either download the entire theme directory or update the existing files using the latest revision found in `/themes/.last-revision`.
+This will update the existing files using the latest revision found in `/plugins/.last-revision`.
 
 ## Features
 
