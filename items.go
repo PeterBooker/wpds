@@ -104,9 +104,20 @@ func getUpdatedItems(ctx *cli.Context, dir string, rev int) {
 	bBytes, err := ioutil.ReadAll(resp.Body)
 	bString := string(bBytes)
 
-	items := regexUpdatedItems.FindAllString(bString, -1)
+	itemsGroups := regexUpdatedItems.FindAllStringSubmatch(bString, -1)
 
-	removeDuplicates(&items)
+	var items []string
+	found := make(map[string]bool)
+
+	// Get the desired substring match and remove duplicates
+	for _, item := range itemsGroups {
+
+		if !found[item[1]] {
+			found[item[1]] = true
+			items = append(items, item[1])
+		}
+
+	}
 
 	fetchItems(items, dir, ctx.Int("limit"))
 

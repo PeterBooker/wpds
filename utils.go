@@ -151,21 +151,6 @@ func isDirEmpty(dir string) (bool, error) {
 
 }
 
-func removeDuplicates(items *[]string) {
-
-	found := make(map[string]bool)
-	i := 0
-	for k, v := range *items {
-		if !found[v] {
-			found[v] = true
-			(*items)[i] = strings.TrimPrefix((*items)[k], "* ")
-			i++
-		}
-	}
-	*items = (*items)[:i]
-
-}
-
 // Properly encodes the URL for compatibility with special characters
 // e.g. 新浪微博 and ЯндексФотки
 func encodeURL(rawURL string) string {
