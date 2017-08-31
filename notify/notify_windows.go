@@ -10,10 +10,10 @@ const (
 )
 
 // SendNotification sends a platform specific desktop notification.
-func SendNotification(title string, message string, elapsed time.Duration) error {
+func SendNotification(title string, message string, elapsed time.Duration) {
 
 	if elapsed < notificationBreakpoint {
-		return nil
+		return
 	}
 
 	notification := toast.Notification{
@@ -22,6 +22,8 @@ func SendNotification(title string, message string, elapsed time.Duration) error
 		Message: message,
 	}
 
-	return notification.Push()
+	notification.Push()
+
+	return
 
 }

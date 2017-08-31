@@ -13,9 +13,11 @@ const (
 func SendNotification(title string, message string, elapsed time.Duration) {
 
 	if elapsed < notificationBreakpoint {
-		return nil
+		return
 	}
 
 	exec.Command("notify-send", title, message)
+
+	return
 
 }
