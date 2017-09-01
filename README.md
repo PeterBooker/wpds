@@ -62,7 +62,9 @@ But subsequent updates are smarter. The script tracks the SVN revision number of
 
 ### How much disk space do I need?
 
-As of February 2017, the script will download about 14 GB of zip files. When unpacked, they will take up 32 GB of space.
+As of September 2017:
+
+69607 Plugins- extracting 884,056 folders, 2,321,090 files, taking up 34.6 GB of space.
 
 ### Something went wrong, how do I do a partial update?
 
