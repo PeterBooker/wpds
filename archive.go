@@ -30,11 +30,11 @@ func extract(content []byte, length int64, dest string, dir string) error {
 		// If this is a Directory, create it and move on.
 		if zf.FileInfo().IsDir() {
 
-			folder := filepath.Join(path, zf.Name)
+			folder := filepath.Join(wd, dir, zf.Name)
 
 			err := mkdir(folder)
 			if err != nil {
-
+				// ignore errors
 			}
 
 			return
@@ -49,12 +49,13 @@ func extract(content []byte, length int64, dest string, dir string) error {
 		defer fr.Close()
 
 		path := strings.Replace(filepath.Join(wd, dir, zf.Name), "/", string(filepath.Separator), -1)
-		dir, _ := filepath.Split(path)
+		//dir, _ := filepath.Split(path)
+		dt := filepath.Dir(path)
 
 		// Make the directory required by this File.
-		err = mkdir(dir)
+		err = mkdir(dt)
 		if err != nil {
-
+			// ignore error
 		}
 
 		// Create File.
@@ -68,7 +69,7 @@ func extract(content []byte, length int64, dest string, dir string) error {
 		// Copy contents to File.
 		_, err = io.Copy(f, fr)
 		if err != nil {
-			fmt.Printf("Issue writing file <%s>: %s\n", path, err)
+			fmt.Printf("Problem writing contents to file <%s>: %s\n", path, err)
 			return
 		}
 
