@@ -104,7 +104,7 @@ func itemFetchFailure(item string, dir string) error {
 
 	path := filepath.Join(wd, dir, fname)
 
-	if _, err := os.Stat("/path/to/whatever"); os.IsNotExist(err) {
+	if _, err := os.Stat(path); os.IsNotExist(err) {
 
 		f, err := os.Create(path)
 		defer f.Close()
@@ -114,7 +114,7 @@ func itemFetchFailure(item string, dir string) error {
 
 	}
 
-	f, err := os.OpenFile(item, os.O_APPEND, 0777)
+	f, err := os.OpenFile(path, os.O_APPEND, 0777)
 	if err != nil {
 		return err
 	}
