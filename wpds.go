@@ -9,6 +9,7 @@ import (
 	"sort"
 	"time"
 
+	"github.com/peterbooker/wpds/search"
 	"github.com/urfave/cli"
 )
 
@@ -41,7 +42,7 @@ func main() {
 
 	app := cli.NewApp()
 	app.Name = "WPDS"
-	app.Usage = "WPDS is a CLI tool for mass WordPress Plugin downloads."
+	app.Usage = "WPDS is a CLI tool for downloading and searching the WordPress Plugin/Theme Directories."
 	app.Version = "0.2.0"
 	app.Compiled = time.Now()
 	app.Authors = []cli.Author{
@@ -83,7 +84,7 @@ func main() {
 		{
 			Name:    "download",
 			Aliases: []string{"d"},
-			Usage:   "Download and update all WordPress Plugins.",
+			Usage:   "Download and update all WordPress Plugins or Themes.",
 			Subcommands: []cli.Command{
 				{
 					Name:  "plugins",
@@ -154,26 +155,38 @@ func main() {
 
 				if cprof := c.GlobalString("cpuprofile"); cprof != "" {
 
-					f, err := os.Create(cprof)
-					if err != nil {
-						panic(err)
-					}
-					pprof.StartCPUProfile(f)
-					defer pprof.StopCPUProfile()
+					go func() {
+
+						time.Sleep(60 * time.Second)
+
+						f, err := os.Create(cprof)
+						if err != nil {
+							panic(err)
+						}
+						pprof.StartCPUProfile(f)
+						defer pprof.StopCPUProfile()
+
+					}()
 
 				}
 
 				if mprof := c.GlobalString("memprofile"); mprof != "" {
 
-					f, err := os.Create(mprof)
-					if err != nil {
-						panic(err)
-					}
-					runtime.GC()
-					if err := pprof.WriteHeapProfile(f); err != nil {
-						panic(err)
-					}
-					f.Close()
+					go func() {
+
+						time.Sleep(60 * time.Second)
+
+						f, err := os.Create(mprof)
+						if err != nil {
+							panic(err)
+						}
+						runtime.GC()
+						if err := pprof.WriteHeapProfile(f); err != nil {
+							panic(err)
+						}
+						f.Close()
+
+					}()
 
 				}
 
@@ -197,7 +210,7 @@ func main() {
 		{
 			Name:    "update",
 			Aliases: []string{"u"},
-			Usage:   "Update all WordPress Plugins.",
+			Usage:   "Update all WordPress Plugins or Themes.",
 			Subcommands: []cli.Command{
 				{
 					Name:  "plugins",
@@ -317,6 +330,8 @@ func main() {
 						if pattern == "" {
 							return cli.NewExitError("Please specify a search pattern.", 20)
 						}
+
+						search.NewStringSearch(pattern, "plugins")
 
 						//results := startSearch(pattern)
 
