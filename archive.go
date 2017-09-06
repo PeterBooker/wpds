@@ -10,14 +10,14 @@ import (
 	"strings"
 )
 
-func extract(content []byte, length int64, dest string) error {
+func extract(content []byte, length int64, dest string, dir string) error {
 
 	zr, err := zip.NewReader(bytes.NewReader(content), length)
 	if err != nil {
 		return err
 	}
 
-	path := filepath.Join(wd, "plugins", dest)
+	path := filepath.Join(wd, dir, dest)
 
 	err = mkdir(path)
 	if err != nil {
@@ -48,7 +48,7 @@ func extract(content []byte, length int64, dest string) error {
 		}
 		defer fr.Close()
 
-		path := strings.Replace(filepath.Join(wd, "plugins", zf.Name), "/", string(filepath.Separator), -1)
+		path := strings.Replace(filepath.Join(wd, dir, zf.Name), "/", string(filepath.Separator), -1)
 		dir, _ := filepath.Split(path)
 
 		// Make the directory required by this File.
