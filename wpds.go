@@ -43,7 +43,7 @@ func main() {
 	app := cli.NewApp()
 	app.Name = "WPDS"
 	app.Usage = "WPDS is a CLI tool for downloading and searching the WordPress Plugin/Theme Directories."
-	app.Version = "0.2.0"
+	app.Version = "0.3.0"
 	app.Compiled = time.Now()
 	app.Authors = []cli.Author{
 		{
