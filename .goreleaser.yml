@@ -38,6 +38,10 @@ archive:
     386: 32-bit
     darwin: macOS
 
+  files:
+    - README.md
+    - LICENSE
+
 checksum:
 
   name_template: "{{ .ProjectName }}_checksums.txt"
