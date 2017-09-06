@@ -192,6 +192,9 @@ func getItem(item string, dir string) {
 
 	if resp.StatusCode != 200 {
 		//fmt.Printf("Error Downloading Item: %s Status Code: %d\n", item, resp.StatusCode)
+		if resp.StatusCode == 404 {
+			return
+		}
 		itemFetchFailure(item, dir)
 		return
 	}
