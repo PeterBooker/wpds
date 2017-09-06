@@ -183,7 +183,6 @@ func getItem(item string, dir string) {
 
 	resp, err := c.Get(eURL)
 	if err != nil {
-		//fmt.Printf("Error Downloading Item: %s\n", item)
 		itemFetchFailure(item, dir)
 		return
 	}
@@ -191,24 +190,25 @@ func getItem(item string, dir string) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
-		//fmt.Printf("Error Downloading Item: %s Status Code: %d\n", item, resp.StatusCode)
+
+		// Code 404 is acceptable, means the plugin/theme is no longer available.
 		if resp.StatusCode == 404 {
 			return
 		}
+
 		itemFetchFailure(item, dir)
 		return
+
 	}
 
 	content, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		//fmt.Printf("Error reading Get request body for item: %s\n", item)
 		itemFetchFailure(item, dir)
 		return
 	}
 
 	err = extract(content, resp.ContentLength, item, dir)
 	if err != nil {
-		//fmt.Printf("Error extracting files for: %s\n", item)
 		itemFetchFailure(item, dir)
 		return
 	}
