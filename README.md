@@ -1,4 +1,5 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/PeterBooker/WordPress-Directory-Slurper)](https://goreportcard.com/report/github.com/PeterBooker/WordPress-Directory-Slurper)
+[![License](https://img.shields.io/badge/license-GPL--2.0%2B-red.svg)](https://github.com/PeterBooker/WordPress-Directory-Slurper/blob/master/LICENSE)
 
 # WPDS (WordPress Directory Slurper)
 WPDS is a cross-platform CLI tool built with [Go](https://golang.org/). Slurps down the latest version of every Plugin and/or Theme in the WordPress Directory. Comes with inbuilt searching and formatted search summaries. Based on the Plugin and Theme Directory Slurpers by [markjaquith](https://github.com/markjaquith/WordPress-Plugin-Directory-Slurper), [clorith](https://github.com/Clorith/WordPress-Plugin-Directory-Slurper), [ipstenu](https://github.com/Ipstenu/WordPress-Theme-Directory-Slurper) and [chriscct7](https://github.com/chriscct7/WordPress-Plugin-Directory-Slurper/).
