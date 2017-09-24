@@ -56,8 +56,6 @@ func getAllItems(ctx *cli.Context, dir string) {
 
 	elapsed := time.Since(ctx.App.Metadata["started"].(time.Time))
 
-	notify.SendNotification("WPDS", "Download Task Completed.", elapsed)
-
 }
 
 func getUpdatedItems(ctx *cli.Context, dir string, rev int) {
@@ -85,8 +83,6 @@ func getUpdatedItems(ctx *cli.Context, dir string, rev int) {
 	}
 
 	elapsed := time.Since(ctx.App.Metadata["started"].(time.Time))
-
-	notify.SendNotification("WPDS", "Update Task Completed.", elapsed)
 
 }
 
