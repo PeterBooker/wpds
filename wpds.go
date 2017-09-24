@@ -14,7 +14,7 @@ import (
 )
 
 const (
-	version = "0.3.0"
+	version   = "0.4.0"
 	userAgent = "wpds/" + version
 )
 
@@ -96,7 +96,7 @@ func main() {
 					Usage: "Download all WordPress Plugins.",
 					Flags: []cli.Flag{
 						cli.IntFlag{
-							Name:  "limit, l",
+							Name:  "concurrent-actions, c",
 							Value: 10,
 							Usage: "Number of simultaneous downloads.",
 						},
@@ -128,7 +128,7 @@ func main() {
 					Usage: "Download all WordPress Themes.",
 					Flags: []cli.Flag{
 						cli.IntFlag{
-							Name:  "limit, l",
+							Name:  "concurrent-actions, c",
 							Value: 10,
 							Usage: "Number of simultaneous downloads.",
 						},

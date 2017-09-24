@@ -1,4 +1,4 @@
-[![Release](https://img.shields.io/badge/version-v0.3.0-blue.svg)](https://github.com/PeterBooker/WordPress-Directory-Slurper/releases/tag/v0.3.0)
+[![Release](https://img.shields.io/badge/version-v0.4.0-blue.svg)](https://github.com/PeterBooker/WordPress-Directory-Slurper/releases/tag/v0.4.0)
 [![Go Report Card](https://goreportcard.com/badge/github.com/PeterBooker/WordPress-Directory-Slurper)](https://goreportcard.com/report/github.com/PeterBooker/WordPress-Directory-Slurper)
 [![License](https://img.shields.io/badge/license-GPL--2.0%2B-red.svg)](https://github.com/PeterBooker/WordPress-Directory-Slurper/blob/master/LICENSE)
 

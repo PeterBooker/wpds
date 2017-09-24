@@ -47,7 +47,7 @@ func getAllItems(ctx *cli.Context, dir string) {
 		os.Exit(1)
 	}
 
-	fetchItems(items, dir, ctx.Int("limit"))
+	fetchItems(items, dir, ctx.Int("concurrent-actions"))
 
 	err = setCurrentRevision(revision, dir)
 	if err != nil {
@@ -77,7 +77,7 @@ func getUpdatedItems(ctx *cli.Context, dir string, rev int) {
 
 	items = getItemsList(dir, rev, lastRev)
 
-	fetchItems(items, dir, ctx.Int("limit"))
+	fetchItems(items, dir, ctx.Int("concurrent-actions"))
 
 	err = setCurrentRevision(lastRev, dir)
 	if err != nil {
@@ -90,7 +90,7 @@ func getUpdatedItems(ctx *cli.Context, dir string, rev int) {
 
 }
 
-func getItemsList(dir string, rev int, lastRev int) ([]string) {
+func getItemsList(dir string, rev int, lastRev int) []string {
 
 	var items []string
 
@@ -153,7 +153,7 @@ func getItemsList(dir string, rev int, lastRev int) ([]string) {
 
 }
 
-func getBatchedItemsList(dir string, rev int, lastRev int) ([]string) {
+func getBatchedItemsList(dir string, rev int, lastRev int) []string {
 
 	var items []string
 
