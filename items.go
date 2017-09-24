@@ -62,33 +62,64 @@ func getAllItems(ctx *cli.Context, dir string) {
 
 func getUpdatedItems(ctx *cli.Context, dir string, rev int) {
 
-	lrev, err := getLatestRevision(dir)
+	var items []string
+
+	lastRev, err := getLatestRevision(dir)
 	if err != nil {
 		fmt.Println("Cannot get the latest revision, updating cancelled.")
 		os.Exit(1)
 	}
 
-	if rev == lrev {
+	if rev == lastRev {
 		fmt.Printf("You are currently at the latest revision: %d. No update needed.\n", rev)
 		os.Exit(1)
 	}
 
-	rdiff := lrev - rev
+	items = getItemsList(dir, rev, lastRev)
 
-	c := &http.Client{
-		Timeout: 30 * time.Second,
+	fetchItems(items, dir, ctx.Int("limit"))
+
+	err = setCurrentRevision(lastRev, dir)
+	if err != nil {
+		fmt.Println("The current revision could not be saved, updating will not work.")
+	}
+
+	elapsed := time.Since(ctx.App.Metadata["started"].(time.Time))
+
+	notify.SendNotification("WPDS", "Update Task Completed.", elapsed)
+
+}
+
+func getItemsList(dir string, rev int, lastRev int) ([]string) {
+
+	var items []string
+
+	revDiff := lastRev - rev
+
+	if revDiff > 500 {
+		items = getBatchedItemsList(dir, rev, lastRev)
+		return items
 	}
 
 	var eURL string
 
 	switch dir {
 	case "plugins":
-		eURL = encodeURL(fmt.Sprintf(wpPluginChangelogURL, lrev, rdiff))
+		eURL = encodeURL(fmt.Sprintf(wpPluginChangelogURL, lastRev, revDiff))
 	case "themes":
-		eURL = encodeURL(fmt.Sprintf(wpThemeChangelogURL, lrev, rdiff))
+		eURL = encodeURL(fmt.Sprintf(wpThemeChangelogURL, lastRev, revDiff))
 	}
 
-	resp, err := c.Get(eURL)
+	client := newClient(60, 500)
+
+	req, err := http.NewRequest("GET", eURL, nil)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	req.Header.Set("User-Agent", userAgent)
+
+	resp, err := client.Do(req)
 	if err != nil {
 		fmt.Printf("Failed HTTP GET of updated %s.\n", dir)
 		os.Exit(1)
@@ -106,7 +137,6 @@ func getUpdatedItems(ctx *cli.Context, dir string, rev int) {
 
 	itemsGroups := regexUpdatedItems.FindAllStringSubmatch(bString, -1)
 
-	var items []string
 	found := make(map[string]bool)
 
 	// Get the desired substring match and remove duplicates
@@ -119,16 +149,82 @@ func getUpdatedItems(ctx *cli.Context, dir string, rev int) {
 
 	}
 
-	fetchItems(items, dir, ctx.Int("limit"))
+	return items
 
-	err = setCurrentRevision(lrev, dir)
-	if err != nil {
-		fmt.Println("The current revision could not be saved, updating will not work.")
+}
+
+func getBatchedItemsList(dir string, rev int, lastRev int) ([]string) {
+
+	var items []string
+
+	client := newClient(60, 500)
+
+	var eURL string
+
+	var curRev int
+	curRev = rev
+
+	var batchSize int = 400
+
+	fmt.Printf("Current Rev: %d\n", rev)
+	fmt.Printf("Last Rev: %d\n", lastRev)
+
+	found := make(map[string]bool)
+
+	for curRev < lastRev {
+
+		curRev += batchSize
+		if curRev > lastRev {
+			curRev = lastRev
+		}
+
+		switch dir {
+		case "plugins":
+			eURL = encodeURL(fmt.Sprintf(wpPluginChangelogURL, curRev, batchSize))
+		case "themes":
+			eURL = encodeURL(fmt.Sprintf(wpThemeChangelogURL, curRev, batchSize))
+		}
+
+		fmt.Println(eURL)
+
+		req, err := http.NewRequest("GET", eURL, nil)
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		req.Header.Set("User-Agent", userAgent)
+
+		resp, err := client.Do(req)
+		if err != nil {
+			fmt.Printf("Failed HTTP GET of updated %s.\n", dir)
+			os.Exit(1)
+		}
+
+		defer resp.Body.Close()
+
+		if resp.StatusCode != 200 {
+			fmt.Println("Invalid HTTP Response")
+			os.Exit(1)
+		}
+
+		bBytes, err := ioutil.ReadAll(resp.Body)
+		bString := string(bBytes)
+
+		itemsGroups := regexUpdatedItems.FindAllStringSubmatch(bString, -1)
+
+		// Get the desired substring match and remove duplicates
+		for _, item := range itemsGroups {
+
+			if !found[item[1]] {
+				found[item[1]] = true
+				items = append(items, item[1])
+			}
+
+		}
+
 	}
 
-	elapsed := time.Since(ctx.App.Metadata["started"].(time.Time))
-
-	notify.SendNotification("WPDS", "Update Task Completed.", elapsed)
+	return items
 
 }
 

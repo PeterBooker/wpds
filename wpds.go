@@ -14,6 +14,11 @@ import (
 )
 
 const (
+	version = "0.3.0"
+	userAgent = "wpds/" + version
+)
+
+const (
 	wpAllPluginsListURL        = "http://plugins.svn.wordpress.org/"
 	wpAllThemesListURL         = "http://themes.svn.wordpress.org/"
 	wpLatestPluginsRevisionURL = "http://plugins.trac.wordpress.org/log/?format=changelog&stop_rev=HEAD"
@@ -43,7 +48,7 @@ func main() {
 	app := cli.NewApp()
 	app.Name = "WPDS"
 	app.Usage = "WPDS is a CLI tool for downloading and searching the WordPress Plugin/Theme Directories."
-	app.Version = "0.3.0"
+	app.Version = version
 	app.Compiled = time.Now()
 	app.Authors = []cli.Author{
 		{
