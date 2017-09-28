@@ -8,7 +8,6 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/peterbooker/wpds/notify"
 	"github.com/urfave/cli"
 	"gopkg.in/cheggaaa/pb.v1"
 )
@@ -54,8 +53,6 @@ func getAllItems(ctx *cli.Context, dir string) {
 		fmt.Println("The current revision could not be saved, updating will not work.")
 	}
 
-	elapsed := time.Since(ctx.App.Metadata["started"].(time.Time))
-
 }
 
 func getUpdatedItems(ctx *cli.Context, dir string, rev int) {
@@ -81,8 +78,6 @@ func getUpdatedItems(ctx *cli.Context, dir string, rev int) {
 	if err != nil {
 		fmt.Println("The current revision could not be saved, updating will not work.")
 	}
-
-	elapsed := time.Since(ctx.App.Metadata["started"].(time.Time))
 
 }
 
