@@ -97,7 +97,7 @@ func main() {
 					Flags: []cli.Flag{
 						cli.IntFlag{
 							Name:  "concurrent-actions, c",
-							Value: 10,
+							Value: 50,
 							Usage: "Number of simultaneous downloads.",
 						},
 						cli.StringFlag{
@@ -129,7 +129,7 @@ func main() {
 					Flags: []cli.Flag{
 						cli.IntFlag{
 							Name:  "concurrent-actions, c",
-							Value: 10,
+							Value: 50,
 							Usage: "Number of simultaneous downloads.",
 						},
 						cli.StringFlag{
@@ -222,8 +222,8 @@ func main() {
 					Usage: "Update all WordPress Plugins.",
 					Flags: []cli.Flag{
 						cli.IntFlag{
-							Name:  "limit, l",
-							Value: 10,
+							Name:  "concurrent-actions, c",
+							Value: 50,
 							Usage: "Number of simultaneous downloads.",
 						},
 						cli.StringFlag{
@@ -250,8 +250,8 @@ func main() {
 					Usage: "Update all WordPress Themes.",
 					Flags: []cli.Flag{
 						cli.IntFlag{
-							Name:  "limit, l",
-							Value: 10,
+							Name:  "concurrent-actions, c",
+							Value: 50,
 							Usage: "Number of simultaneous downloads.",
 						},
 						cli.StringFlag{
