@@ -1,7 +1,12 @@
 project_name: wpds
 
 builds:
-  - binary: wpds
+
+  - 
+
+    main: ./cmd/cli/main.go
+  
+    binary: wpds
 
     env:
       - CGO_ENABLED=0
