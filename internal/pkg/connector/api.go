@@ -25,7 +25,7 @@ var (
 	regexAPIFullExtensionsList = regexp.MustCompile(`.+?\>(\S+?)\/\<`)
 )
 
-// API implements the Repository inferface.
+// API implements the DirectoryConnector inferface.
 // It uses an HTTP API to communicate with the WordPress Directory SVN Repositories.
 type API struct {
 	currentRevision int
@@ -33,6 +33,7 @@ type API struct {
 	extensions      []string
 }
 
+// newAPI returns a pointer to an empty API struct.
 func newAPI(ctx *context.Context) *API {
 
 	return &API{}

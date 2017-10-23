@@ -15,7 +15,7 @@ var (
 	regexSVNLatestRevision        = regexp.MustCompile(`r([0-9]+)`)
 )
 
-// SVN implements the Repository inferface.
+// SVN implements the DirectoryConnector inferface.
 // It uses a local SVN client to communicate with the WordPress Directory SVN Repositories.
 type SVN struct {
 	currentRevision int
@@ -23,6 +23,7 @@ type SVN struct {
 	extensions      []string
 }
 
+// newSVN returns a pointer to an empty SVN struct.
 func newSVN(ctx *context.Context) *SVN {
 
 	return &SVN{}
