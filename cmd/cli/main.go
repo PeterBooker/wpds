@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/peterbooker/wpds2/internal/app/cli"
+	"github.com/peterbooker/wpds/internal/app/cli"
 )
 
 func main() {

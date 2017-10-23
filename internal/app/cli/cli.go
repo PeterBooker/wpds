@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/peterbooker/wpds2/internal/app/cli/commands"
+	"github.com/peterbooker/wpds/internal/app/cli/commands"
 )
 
 // Execute ...

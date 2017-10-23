@@ -1,7 +1,7 @@
 package connector
 
 import (
-	"github.com/peterbooker/wpds2/internal/pkg/context"
+	"github.com/peterbooker/wpds/internal/pkg/context"
 )
 
 // DirectoryConnector implements the methods required to interact with the WordPress Directories

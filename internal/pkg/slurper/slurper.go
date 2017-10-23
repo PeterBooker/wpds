@@ -7,9 +7,9 @@ import (
 	"path/filepath"
 	"regexp"
 
-	"github.com/peterbooker/wpds2/internal/pkg/connector"
-	"github.com/peterbooker/wpds2/internal/pkg/context"
-	"github.com/peterbooker/wpds2/internal/pkg/utils"
+	"github.com/peterbooker/wpds/internal/pkg/connector"
+	"github.com/peterbooker/wpds/internal/pkg/context"
+	"github.com/peterbooker/wpds/internal/pkg/utils"
 )
 
 const (

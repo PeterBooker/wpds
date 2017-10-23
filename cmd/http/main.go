@@ -2,8 +2,8 @@ package main
 
 import (
 	"github.com/go-chi/valve"
-	"github.com/peterbooker/wpds2/internal/http"
-	"github.com/peterbooker/wpds2/internal/worker"
+	"github.com/peterbooker/wpds/internal/http"
+	"github.com/peterbooker/wpds/internal/worker"
 )
 
 func main() {

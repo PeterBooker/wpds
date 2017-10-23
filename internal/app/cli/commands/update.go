@@ -5,10 +5,10 @@ import (
 	"os"
 	"runtime/pprof"
 
-	"github.com/peterbooker/wpds2/internal/pkg/config"
-	"github.com/peterbooker/wpds2/internal/pkg/context"
-	"github.com/peterbooker/wpds2/internal/pkg/slurper"
-	"github.com/peterbooker/wpds2/internal/pkg/stats"
+	"github.com/peterbooker/wpds/internal/pkg/config"
+	"github.com/peterbooker/wpds/internal/pkg/context"
+	"github.com/peterbooker/wpds/internal/pkg/slurper"
+	"github.com/peterbooker/wpds/internal/pkg/stats"
 	"github.com/spf13/cobra"
 )
 

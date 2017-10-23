@@ -3,7 +3,7 @@ package commands
 import (
 	"fmt"
 
-	"github.com/peterbooker/wpds2/internal/pkg/config"
+	"github.com/peterbooker/wpds/internal/pkg/config"
 	"github.com/spf13/cobra"
 )
 

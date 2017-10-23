@@ -3,7 +3,7 @@ package commands
 import (
 	"log"
 
-	"github.com/peterbooker/wpds2/internal/pkg/search"
+	"github.com/peterbooker/wpds/internal/pkg/search"
 	"github.com/spf13/cobra"
 )
 

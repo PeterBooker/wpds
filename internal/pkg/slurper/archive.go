@@ -9,8 +9,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/peterbooker/wpds2/internal/pkg/context"
-	"github.com/peterbooker/wpds2/internal/pkg/utils"
+	"github.com/peterbooker/wpds/internal/pkg/context"
+	"github.com/peterbooker/wpds/internal/pkg/utils"
 )
 
 func ExtractZip(content []byte, length int64, dest string, ctx *context.Context) (uint64, error) {

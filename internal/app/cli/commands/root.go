@@ -4,7 +4,7 @@ import (
 	"os"
 	"runtime/pprof"
 
-	"github.com/peterbooker/wpds2/internal/app/cli/log"
+	"github.com/peterbooker/wpds/internal/app/cli/log"
 	"github.com/spf13/cobra"
 )
 

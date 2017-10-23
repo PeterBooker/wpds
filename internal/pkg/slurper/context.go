@@ -1,7 +1,7 @@
 package slurper
 
 import (
-	"github.com/peterbooker/wpds2/internal/pkg/stats"
+	"github.com/peterbooker/wpds/internal/pkg/stats"
 )
 
 // Context contains the data required for Slurping

@@ -6,7 +6,7 @@ import (
 	"regexp"
 	"strconv"
 
-	"github.com/peterbooker/wpds2/internal/pkg/context"
+	"github.com/peterbooker/wpds/internal/pkg/context"
 )
 
 var (
