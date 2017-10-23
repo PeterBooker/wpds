@@ -1,8 +1,6 @@
 package connector
 
 import (
-	"os/exec"
-
 	"github.com/peterbooker/wpds2/internal/pkg/context"
 )
 
@@ -33,17 +31,5 @@ func GetConnector(ctx *context.Context) DirectoryConnector {
 	}
 
 	return connector
-
-}
-
-// CheckForSVN checks if a local SVN client is available
-func checkForSVN() bool {
-
-	_, err := exec.LookPath("svn")
-	if err != nil {
-		return false
-	}
-
-	return true
 
 }
