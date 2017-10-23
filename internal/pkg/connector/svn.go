@@ -17,7 +17,11 @@ var (
 
 // SVN implements the Repository inferface.
 // It uses a local SVN client to communicate with the WordPress Directory SVN Repositories.
-type SVN struct{}
+type SVN struct {
+	currentRevision int
+	latestRevision  int
+	extensions      []string
+}
 
 func newSVN(ctx *context.Context) *SVN {
 
@@ -25,7 +29,7 @@ func newSVN(ctx *context.Context) *SVN {
 
 }
 
-// GetLatestRevision gets the latest revision of the target directory
+// GetLatestRevision gets the latest revision of the target directory.
 func (svn *SVN) GetLatestRevision(ctx *context.Context) (int, error) {
 
 	URL := fmt.Sprintf("https://%s.svn.wordpress.org/", ctx.ExtensionType)
@@ -34,20 +38,20 @@ func (svn *SVN) GetLatestRevision(ctx *context.Context) (int, error) {
 
 	out, _ := exec.Command("svn", args...).Output()
 
-	itemsGroups := regexSVNLatestRevision.FindAllStringSubmatch(string(out), -1)
+	matches := regexSVNLatestRevision.FindAllStringSubmatch(string(out), -1)
 
-	revision, err := strconv.Atoi(itemsGroups[0][1])
+	var err error
 
+	svn.latestRevision, err = strconv.Atoi(matches[0][1])
 	if err != nil {
 		return 0, err
 	}
 
-	return revision, nil
+	return svn.latestRevision, nil
 
 }
 
-// GetFullExtensionsList gets a full list
-// TODO: Finish this, needs regex and output
+// GetFullExtensionsList gets the fill list of all Extensions.
 func (svn *SVN) GetFullExtensionsList(ctx *context.Context) ([]string, error) {
 
 	URL := fmt.Sprintf("https://%s.svn.wordpress.org/", ctx.ExtensionType)
@@ -56,22 +60,20 @@ func (svn *SVN) GetFullExtensionsList(ctx *context.Context) ([]string, error) {
 
 	out, _ := exec.Command("svn", args...).Output()
 
-	groups := regexSVNFullExtensionsList.FindAllStringSubmatch(string(out), -1)
-
-	var extensions []string
+	matches := regexSVNFullExtensionsList.FindAllStringSubmatch(string(out), -1)
 
 	// Add all matches to extension list
-	for _, extension := range groups {
+	for _, extension := range matches {
 
-		extensions = append(extensions, extension[1])
+		svn.extensions = append(svn.extensions, extension[1])
 
 	}
 
-	return extensions, nil
+	return svn.extensions, nil
 
 }
 
-// GetUpdatedExtensionsList gets an updated list
+// GetUpdatedExtensionsList gets an updated list of Extensions.
 func (svn *SVN) GetUpdatedExtensionsList(ctx *context.Context) ([]string, error) {
 
 	diff := fmt.Sprintf("%d:%d", ctx.CurrentRevision, ctx.LatestRevision)
@@ -84,8 +86,6 @@ func (svn *SVN) GetUpdatedExtensionsList(ctx *context.Context) ([]string, error)
 
 	groups := regexSVNUpdatedExtensionsList.FindAllStringSubmatch(string(out), -1)
 
-	var extensions []string
-
 	found := make(map[string]bool)
 
 	// Get the desired substring match and remove duplicates
@@ -93,11 +93,11 @@ func (svn *SVN) GetUpdatedExtensionsList(ctx *context.Context) ([]string, error)
 
 		if !found[extension[1]] {
 			found[extension[1]] = true
-			extensions = append(extensions, extension[1])
+			svn.extensions = append(svn.extensions, extension[1])
 		}
 
 	}
 
-	return extensions, nil
+	return svn.extensions, nil
 
 }

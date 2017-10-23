@@ -27,7 +27,11 @@ var (
 
 // API implements the Repository inferface.
 // It uses an HTTP API to communicate with the WordPress Directory SVN Repositories.
-type API struct{}
+type API struct {
+	currentRevision int
+	latestRevision  int
+	extensions      []string
+}
 
 func newAPI(ctx *context.Context) *API {
 
@@ -35,10 +39,9 @@ func newAPI(ctx *context.Context) *API {
 
 }
 
-// GetLatestRevision ...
+// GetLatestRevision gets the latest revision of the target directory.
 func (api API) GetLatestRevision(ctx *context.Context) (int, error) {
 
-	var revision int
 	var URL string
 
 	client := &http.Client{
@@ -71,19 +74,17 @@ func (api API) GetLatestRevision(ctx *context.Context) (int, error) {
 
 	revs := regexAPILatestRevision.FindAllStringSubmatch(bString, 1)
 
-	revision, err = strconv.Atoi(revs[0][1])
+	api.latestRevision, err = strconv.Atoi(revs[0][1])
 	if err != nil {
 		return 0, err
 	}
 
-	return revision, nil
+	return api.latestRevision, nil
 
 }
 
-// GetFullExtensionsList ...
+// GetFullExtensionsList gets the fill list of all Extensions.
 func (api *API) GetFullExtensionsList(ctx *context.Context) ([]string, error) {
-
-	var extensions []string
 
 	client := &http.Client{
 		Timeout: 60 * time.Second,
@@ -93,7 +94,7 @@ func (api *API) GetFullExtensionsList(ctx *context.Context) ([]string, error) {
 
 	req, err := http.NewRequest("GET", URL, nil)
 	if err != nil {
-		return extensions, err
+		return api.extensions, err
 	}
 
 	// Set User Agent e.g. wpds/1.1.3
@@ -102,34 +103,32 @@ func (api *API) GetFullExtensionsList(ctx *context.Context) ([]string, error) {
 
 	resp, err := client.Do(req)
 	if err != nil {
-		return extensions, err
+		return api.extensions, err
 	}
 
 	if resp.StatusCode != 200 {
-		return extensions, fmt.Errorf("Invalid HTTP response code: %d", resp.StatusCode)
+		return api.extensions, fmt.Errorf("Invalid HTTP response code: %d", resp.StatusCode)
 	}
 
 	defer resp.Body.Close()
 	bBytes, err := ioutil.ReadAll(resp.Body)
 	bString := string(bBytes)
 
-	groups := regexAPIFullExtensionsList.FindAllStringSubmatch(bString, 1)
+	matches := regexAPIFullExtensionsList.FindAllStringSubmatch(bString, 1)
 
 	// Add all matches to extension list
-	for _, extension := range groups {
+	for _, extension := range matches {
 
-		extensions = append(extensions, extension[1])
+		api.extensions = append(api.extensions, extension[1])
 
 	}
 
-	return extensions, nil
+	return api.extensions, nil
 
 }
 
-// GetUpdatedExtensionsList ...
+// GetUpdatedExtensionsList an updated list of Extensions.
 func (api *API) GetUpdatedExtensionsList(ctx *context.Context) ([]string, error) {
-
-	var extensions []string
 
 	client := &http.Client{
 		Timeout: 60 * time.Second,
@@ -139,7 +138,7 @@ func (api *API) GetUpdatedExtensionsList(ctx *context.Context) ([]string, error)
 
 	req, err := http.NewRequest("GET", URL, nil)
 	if err != nil {
-		return extensions, err
+		return api.extensions, err
 	}
 
 	// Set User Agent e.g. wpds/1.1.3
@@ -148,31 +147,31 @@ func (api *API) GetUpdatedExtensionsList(ctx *context.Context) ([]string, error)
 
 	resp, err := client.Do(req)
 	if err != nil {
-		return extensions, err
+		return api.extensions, err
 	}
 
 	if resp.StatusCode != 200 {
-		return extensions, fmt.Errorf("Invalid HTTP response code: %d", resp.StatusCode)
+		return api.extensions, fmt.Errorf("Invalid HTTP response code: %d", resp.StatusCode)
 	}
 
 	defer resp.Body.Close()
 	bBytes, err := ioutil.ReadAll(resp.Body)
 	bString := string(bBytes)
 
-	groups := regexAPIFullExtensionsList.FindAllStringSubmatch(bString, 1)
+	matches := regexAPIFullExtensionsList.FindAllStringSubmatch(bString, 1)
 
 	found := make(map[string]bool)
 
 	// Get the desired substring match and remove duplicates
-	for _, extension := range groups {
+	for _, extension := range matches {
 
 		if !found[extension[1]] {
 			found[extension[1]] = true
-			extensions = append(extensions, extension[1])
+			api.extensions = append(api.extensions, extension[1])
 		}
 
 	}
 
-	return extensions, nil
+	return api.extensions, nil
 
 }
