@@ -11,8 +11,8 @@ type Context struct {
 	ConcurrentActions int
 	ExtensionType     string
 	FileType          string
+	Connector         string
 	CurrentRevision   int
 	LatestRevision    int
-	SVN               bool
 	Stats             *stats.Stats
 }
