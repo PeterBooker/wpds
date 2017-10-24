@@ -14,5 +14,6 @@ type Context struct {
 	Connector         string
 	CurrentRevision   int
 	LatestRevision    int
+	WorkingDirectory  string
 	Stats             *stats.Stats
 }

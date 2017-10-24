@@ -45,13 +45,9 @@ var pluginsUpdateCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
-		log.Println("Updating Plugins...")
-
 		// Get Config Details
 		name := config.GetName()
 		version := config.GetVersion()
-
-		stats := stats.New()
 
 		// Check if SVN is installed
 		// Used if available, as it is more reliable than the HTTP API
@@ -59,6 +55,12 @@ var pluginsUpdateCmd = &cobra.Command{
 		if slurper.CheckForSVN() {
 			connector = "svn"
 		}
+
+		// Get Working Directory
+		wd, _ := os.Getwd()
+
+		// Create new Stats
+		stats := stats.New()
 
 		ctx := &context.Context{
 			Name:              name,
@@ -69,8 +71,11 @@ var pluginsUpdateCmd = &cobra.Command{
 			Connector:         connector,
 			CurrentRevision:   0,
 			LatestRevision:    0,
+			WorkingDirectory:  wd,
 			Stats:             stats,
 		}
+
+		log.Println("Updating Plugins...")
 
 		slurper.StartUpdate(ctx)
 
@@ -98,13 +103,9 @@ var themesUpdateCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
-		log.Println("Updating Themes...")
-
 		// Get Config Details
 		name := config.GetName()
 		version := config.GetVersion()
-
-		stats := stats.New()
 
 		// Check if SVN is installed
 		// Used if available, as it is more reliable than the HTTP API
@@ -112,6 +113,12 @@ var themesUpdateCmd = &cobra.Command{
 		if slurper.CheckForSVN() {
 			connector = "svn"
 		}
+
+		// Get Working Directory
+		wd, _ := os.Getwd()
+
+		// Create new Stats
+		stats := stats.New()
 
 		ctx := &context.Context{
 			Name:              name,
@@ -122,8 +129,11 @@ var themesUpdateCmd = &cobra.Command{
 			Connector:         connector,
 			CurrentRevision:   0,
 			LatestRevision:    0,
+			WorkingDirectory:  wd,
 			Stats:             stats,
 		}
+
+		log.Println("Updating Themes...")
 
 		slurper.StartUpdate(ctx)
 
