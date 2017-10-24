@@ -55,7 +55,10 @@ var pluginsUpdateCmd = &cobra.Command{
 
 		// Check if SVN is installed
 		// Used if available, as it is more reliable than the HTTP API
-		svn := slurper.CheckForSVN()
+		connector := "api"
+		if slurper.CheckForSVN() {
+			connector = "svn"
+		}
 
 		ctx := &context.Context{
 			Name:              name,
@@ -63,9 +66,9 @@ var pluginsUpdateCmd = &cobra.Command{
 			ConcurrentActions: C,
 			ExtensionType:     "plugins",
 			FileType:          F,
+			Connector:         connector,
 			CurrentRevision:   0,
 			LatestRevision:    0,
-			SVN:               svn,
 			Stats:             stats,
 		}
 

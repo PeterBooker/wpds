@@ -33,13 +33,6 @@ type API struct {
 	extensions      []string
 }
 
-// newAPI returns a pointer to an empty API struct.
-func newAPI(ctx *context.Context) *API {
-
-	return &API{}
-
-}
-
 // GetLatestRevision gets the latest revision of the target directory.
 func (api API) GetLatestRevision(ctx *context.Context) (int, error) {
 

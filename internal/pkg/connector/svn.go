@@ -23,13 +23,6 @@ type SVN struct {
 	extensions      []string
 }
 
-// newSVN returns a pointer to an empty SVN struct.
-func newSVN(ctx *context.Context) *SVN {
-
-	return &SVN{}
-
-}
-
 // GetLatestRevision gets the latest revision of the target directory.
 func (svn *SVN) GetLatestRevision(ctx *context.Context) (int, error) {
 

@@ -1,6 +1,10 @@
 package connector
 
 import (
+	"fmt"
+	"os"
+	"strings"
+
 	"github.com/peterbooker/wpds/internal/pkg/context"
 )
 
@@ -12,24 +16,25 @@ type DirectoryConnector interface {
 	GetUpdatedExtensionsList(ctx *context.Context) ([]string, error)
 }
 
-// GetConnector returns a connector used to communicate with the WordPress Directory SVN repositories.
+// Init returns a connector used to communicate with the WordPress Directory SVN repositories.
 // Implemented via an external HTTP API or local SVN client
-func GetConnector(ctx *context.Context) DirectoryConnector {
+func Init(cType string) DirectoryConnector {
 
-	var connector DirectoryConnector
+	switch cType {
 
-	if ctx.SVN {
+	case "svn":
+		return &SVN{}
 
-		// If SVN is available use it.
-		connector = newSVN(ctx)
+	case "api":
+		return &API{}
 
-	} else {
-
-		// If SVN is not available, fallback to the HTTP API
-		connector = newAPI(ctx)
+	default:
+		// No supported storage found.
+		fmt.Printf("The defined connector '%s' is not supported.", strings.ToUpper(cType))
+		os.Exit(1)
 
 	}
 
-	return connector
+	return nil
 
 }
