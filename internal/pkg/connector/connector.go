@@ -29,7 +29,7 @@ func Init(cType string) DirectoryConnector {
 		return &API{}
 
 	default:
-		// No supported storage found.
+		// No supported connector found.
 		fmt.Printf("The defined connector '%s' is not supported.", strings.ToUpper(cType))
 		os.Exit(1)
 

@@ -89,7 +89,7 @@ func newSlurp(ctx *context.Context) error {
 	var revision int
 	var err error
 
-	conn := connector.GetConnector(ctx)
+	conn := connector.Init(ctx.Connector)
 
 	extensions, err = conn.GetFullExtensionsList(ctx)
 	if err != nil {
@@ -119,7 +119,7 @@ func updateSlurp(ctx *context.Context) error {
 
 	var extensions []string
 
-	conn := connector.GetConnector(ctx)
+	conn := connector.Init(ctx.Connector)
 
 	currentRevision, err := getCurrentRevision(ctx.ExtensionType)
 	if err != nil {
