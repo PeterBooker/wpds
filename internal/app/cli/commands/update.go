@@ -124,7 +124,7 @@ var themesUpdateCmd = &cobra.Command{
 			Name:              name,
 			Version:           version,
 			ConcurrentActions: C,
-			ExtensionType:     "plugins",
+			ExtensionType:     "themes",
 			FileType:          F,
 			Connector:         connector,
 			CurrentRevision:   0,
