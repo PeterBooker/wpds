@@ -98,7 +98,7 @@ var themesUpdateCmd = &cobra.Command{
 			defer pprof.StopCPUProfile()
 		}
 
-		if (C < 10) || (C > 1000) {
+		if (C < 10) || (C > 10000) {
 			log.Printf("Flag (concurrent-actions, c) out of permitted range (10-1000).\n")
 			os.Exit(1)
 		}
