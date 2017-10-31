@@ -17,3 +17,12 @@ type Context struct {
 	WorkingDirectory  string
 	Stats             *stats.Stats
 }
+
+// SearchContext contains data required for Searching
+type SearchContext struct {
+	ExtensionType    string
+	FileType         string
+	ExtWhitelist     []string
+	WorkingDirectory string
+	Stats            *stats.Stats
+}
