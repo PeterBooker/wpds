@@ -1,7 +1,5 @@
 package config
 
-import ()
-
 const (
 	name    = "WPDS"
 	version = "0.5.0"
