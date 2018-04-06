@@ -12,7 +12,7 @@ func GetName() string {
 
 }
 
-// GetName returns the CLI Version
+// GetVersion returns the CLI Version
 func GetVersion() string {
 
 	return version

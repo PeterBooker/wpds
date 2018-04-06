@@ -37,7 +37,9 @@ var (
 	wd, _ = os.Getwd()
 )
 
-// StartUpdate ...
+// StartUpdate begins the update 'plugin/theme' command.
+// It begins by checking for an existing folder.
+// TODO: Check for folder and .last-revision file as that is needed to update an existing slurp.
 func StartUpdate(ctx *context.Context) {
 
 	var fresh bool

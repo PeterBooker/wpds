@@ -13,6 +13,7 @@ import (
 	"github.com/peterbooker/wpds/internal/pkg/utils"
 )
 
+// ExtractZip extracts the archive containing extension data.
 func ExtractZip(content []byte, length int64, dest string, ctx *context.Context) (uint64, error) {
 
 	zr, err := zip.NewReader(bytes.NewReader(content), length)

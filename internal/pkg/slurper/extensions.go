@@ -115,6 +115,7 @@ func getExtension(name string, ctx *context.Context, wg *sync.WaitGroup) {
 
 }
 
+// GetExtension decides which extension data to fetch.
 func GetExtension(name string, ctx *context.Context) {
 
 	var file []byte
@@ -143,6 +144,7 @@ func GetExtension(name string, ctx *context.Context) {
 
 }
 
+// GetExtensionZip gets the extension archive.
 func GetExtensionZip(name string, ctx *context.Context) ([]byte, error) {
 
 	var URL string
@@ -164,6 +166,7 @@ func GetExtensionZip(name string, ctx *context.Context) ([]byte, error) {
 
 }
 
+// GetExtensionReadme gets the extension readme.
 func GetExtensionReadme(name string, ctx *context.Context) ([]byte, error) {
 
 	var URL string

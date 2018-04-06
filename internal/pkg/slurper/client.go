@@ -11,6 +11,7 @@ import (
 	"time"
 )
 
+// NewClient returns a new HTTP client configured for large numbers of requests.
 func NewClient(timeout int, max int) *http.Client {
 
 	var netTransport = &http.Transport{
