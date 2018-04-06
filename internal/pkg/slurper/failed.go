@@ -7,13 +7,15 @@ import (
 	"github.com/peterbooker/wpds/internal/pkg/context"
 )
 
+const (
+	filename = ".failed-downloads"
+)
+
 func extensionFailure(item string, ctx *context.Context) {
 
 	ctx.Stats.IncrementTotalExtensionsFailed()
 
-	fname := ".failed-downloads"
-
-	path := filepath.Join(wd, ctx.ExtensionType, fname)
+	path := filepath.Join(wd, ctx.ExtensionType, filename)
 
 	if _, err := os.Stat(path); os.IsNotExist(err) {
 
