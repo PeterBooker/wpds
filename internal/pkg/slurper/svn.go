@@ -12,6 +12,7 @@ var (
 	regexSVNLatest    = regexp.MustCompile(`r([0-9]+)`)
 )
 
+// CheckForSVN checks if the SVN CLI tool is available.
 func CheckForSVN() bool {
 
 	_, err := exec.LookPath("svn")
@@ -23,6 +24,7 @@ func CheckForSVN() bool {
 
 }
 
+// getSVNUpdatedExtensions gets a list of extensions which were updated between the given revisions.
 func getSVNUpdatedExtensions(cRev, lRev int, extType string) []string {
 
 	diff := fmt.Sprintf("%d:%d", cRev, lRev)
@@ -53,6 +55,7 @@ func getSVNUpdatedExtensions(cRev, lRev int, extType string) []string {
 
 }
 
+// getSVNLatestRevision gets the latest revision from the target repository.
 func getSVNLatestRevision(extType string) (int, error) {
 
 	URL := fmt.Sprintf("https://%s.svn.wordpress.org/", extType)
