@@ -11,14 +11,16 @@ import (
 	"github.com/peterbooker/wpds/internal/pkg/config"
 	"github.com/peterbooker/wpds/internal/pkg/context"
 	"github.com/peterbooker/wpds/internal/pkg/utils"
-	"gopkg.in/cheggaaa/pb.v1"
+	"gopkg.in/cheggaaa/pb.v2"
+)
+
+const (
+	barTemplate = `{{counters .}} {{bar .}} {{rtime .}} {{percent . }}`
 )
 
 func fetchExtensions(extensions []string, ctx *context.Context) error {
 
-	iCount := len(extensions)
-
-	bar := pb.StartNew(iCount)
+	bar := pb.ProgressBarTemplate(barTemplate).Start(len(extensions))
 
 	limiter := make(chan struct{}, ctx.ConcurrentActions)
 
