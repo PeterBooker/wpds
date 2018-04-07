@@ -65,9 +65,9 @@ func getExtension(name string, ctx *context.Context, wg *sync.WaitGroup) {
 
 	switch ctx.ExtensionType {
 	case "plugins":
-		eURL = utils.EncodeURL(fmt.Sprintf(WPPluginDownloadURL, name))
+		eURL = utils.EncodeURL(fmt.Sprintf(wpPluginDownloadURL, name))
 	case "themes":
-		eURL = utils.EncodeURL(fmt.Sprintf(WPThemeDownloadURL, name))
+		eURL = utils.EncodeURL(fmt.Sprintf(wpThemeDownloadURL, name))
 	}
 
 	req, err := http.NewRequest("GET", eURL, nil)
@@ -154,9 +154,9 @@ func GetExtensionZip(name string, ctx *context.Context) ([]byte, error) {
 
 	switch ctx.ExtensionType {
 	case "plugins":
-		URL = utils.EncodeURL(fmt.Sprintf(WPPluginDownloadURL, name))
+		URL = utils.EncodeURL(fmt.Sprintf(wpPluginDownloadURL, name))
 	case "themes":
-		URL = utils.EncodeURL(fmt.Sprintf(WPThemeDownloadURL, name))
+		URL = utils.EncodeURL(fmt.Sprintf(wpThemeDownloadURL, name))
 	}
 
 	response, err := NewRequest(URL, 60, ctx.ConcurrentActions)
@@ -176,9 +176,9 @@ func GetExtensionReadme(name string, ctx *context.Context) ([]byte, error) {
 
 	switch ctx.ExtensionType {
 	case "plugins":
-		URL = utils.EncodeURL(fmt.Sprintf(WPPluginReadmeURL, name))
+		URL = utils.EncodeURL(fmt.Sprintf(wpPluginReadmeURL, name))
 	case "themes":
-		URL = utils.EncodeURL(fmt.Sprintf(WPThemeReadmeURL, name))
+		URL = utils.EncodeURL(fmt.Sprintf(wpThemeReadmeURL, name))
 	}
 
 	response, err := NewRequest(URL, 60, ctx.ConcurrentActions)

@@ -22,9 +22,9 @@ func getLatestRevision(extType string) (int, error) {
 
 	switch extType {
 	case "plugins":
-		rURL = WPLatestPluginsRevisionURL
+		rURL = wpLatestPluginsRevisionURL
 	case "themes":
-		rURL = WPLatestThemesRevisionURL
+		rURL = wpLatestThemesRevisionURL
 	}
 
 	resp, err := c.Get(rURL)

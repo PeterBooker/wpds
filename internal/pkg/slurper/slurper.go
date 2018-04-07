@@ -13,18 +13,18 @@ import (
 )
 
 const (
-	WPAllPluginsListURL        = "http://plugins.svn.wordpress.org/"
-	WPAllThemesListURL         = "http://themes.svn.wordpress.org/"
-	WPLatestPluginsRevisionURL = "http://plugins.trac.wordpress.org/log/?format=changelog&stop_rev=HEAD"
-	WPLatestThemesRevisionURL  = "http://themes.trac.wordpress.org/log/?format=changelog&stop_rev=HEAD"
-	WPPluginChangelogURL       = "https://plugins.trac.wordpress.org/log/?verbose=on&mode=follow_copy&format=changelog&rev=%d&limit=%d"
-	WPThemeChangelogURL        = "https://themes.trac.wordpress.org/log/?verbose=on&mode=follow_copy&format=changelog&rev=%d&limit=%d"
-	WPPluginDownloadURL        = "http://downloads.wordpress.org/plugin/%s.latest-stable.zip?nostats=1"
-	WPThemeDownloadURL         = "http://downloads.wordpress.org/theme/%s.latest-stable.zip?nostats=1"
-	WPPluginReadmeURL          = "https://plugins.svn.wordpress.org/%s/trunk/readme.txt"
-	WPThemeReadmeURL           = "https://theme.svn.wordpress.org/%s/trunk/readme.txt"
-	WPPluginInfoURL            = "https://api.wordpress.org/plugins/info/1.1/?action=plugin_information&request[slug]=%s&request[fields][active_installs]=1"
-	WPThemeInfoURL             = "https://api.wordpress.org/themes/info/1.1/?action=plugin_information&request[slug]=%s&request[fields][active_installs]=1"
+	wpAllPluginsListURL        = "http://plugins.svn.wordpress.org/"
+	wpAllThemesListURL         = "http://themes.svn.wordpress.org/"
+	wpLatestPluginsRevisionURL = "http://plugins.trac.wordpress.org/log/?format=changelog&stop_rev=HEAD"
+	wpLatestThemesRevisionURL  = "http://themes.trac.wordpress.org/log/?format=changelog&stop_rev=HEAD"
+	wpPluginChangelogURL       = "https://plugins.trac.wordpress.org/log/?verbose=on&mode=follow_copy&format=changelog&rev=%d&limit=%d"
+	wpThemeChangelogURL        = "https://themes.trac.wordpress.org/log/?verbose=on&mode=follow_copy&format=changelog&rev=%d&limit=%d"
+	wpPluginDownloadURL        = "http://downloads.wordpress.org/plugin/%s.latest-stable.zip?nostats=1"
+	wpThemeDownloadURL         = "http://downloads.wordpress.org/theme/%s.latest-stable.zip?nostats=1"
+	wpPluginReadmeURL          = "https://plugins.svn.wordpress.org/%s/trunk/readme.txt"
+	wpThemeReadmeURL           = "https://theme.svn.wordpress.org/%s/trunk/readme.txt"
+	wpPluginInfoURL            = "https://api.wordpress.org/plugins/info/1.1/?action=plugin_information&request[slug]=%s&request[fields][active_installs]=1"
+	wpThemeInfoURL             = "https://api.wordpress.org/themes/info/1.1/?action=plugin_information&request[slug]=%s&request[fields][active_installs]=1"
 )
 
 var (
