@@ -38,10 +38,10 @@ func fetchExtensions(extensions []string, ctx *context.Context) error {
 		wg.Add(1)
 
 		go func(name string, ctx *context.Context, wg *sync.WaitGroup) {
+			defer wg.Done()
 			getExtension(name, ctx, wg)
 			bar.Increment()
 			<-limiter
-			wg.Done()
 		}(name, ctx, &wg)
 
 	}
