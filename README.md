@@ -39,7 +39,6 @@ This will update the existing files using the latest revision found in `/plugins
 - [x] Update the Plugin Directory files
 - [x] Download the Theme Directory
 - [x] Update the Theme Directory files
-- [x] Desktop Notifications
 - [ ] In-built Searching
 - [ ] Search Summary Generation
 
