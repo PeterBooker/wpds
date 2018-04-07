@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"sync"
 
+	"github.com/peterbooker/wpds/internal/pkg/config"
 	"github.com/peterbooker/wpds/internal/pkg/context"
 	"github.com/peterbooker/wpds/internal/pkg/utils"
 	"gopkg.in/cheggaaa/pb.v1"
@@ -72,8 +73,8 @@ func getExtension(name string, ctx *context.Context, wg *sync.WaitGroup) {
 		log.Println(err)
 	}
 
-	// TODO: Make this dynamic from config
-	req.Header.Set("User-Agent", "wpds/0.5.0")
+	// Dynamically set User-Agent from config
+	req.Header.Set("User-Agent", config.GetName()+"/"+config.GetVersion())
 
 	resp, err := client.Do(req)
 	if err != nil {
