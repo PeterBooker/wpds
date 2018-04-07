@@ -101,7 +101,7 @@ func ExtractZip(content []byte, length int64, dest string, ctx *context.Context)
 	// Create each File in the Archive.
 	for _, zf := range zr.File {
 		writeFile(zf)
-		size = zf.UncompressedSize64
+		size += zf.UncompressedSize64
 		ctx.Stats.IncrementTotalFiles()
 	}
 
