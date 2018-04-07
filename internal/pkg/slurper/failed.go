@@ -1,6 +1,8 @@
 package slurper
 
 import (
+	"bufio"
+	"io"
 	"os"
 	"path/filepath"
 
@@ -11,6 +13,7 @@ const (
 	filename = ".failed-downloads"
 )
 
+// extensionFailure appends an extension name to the .failed-downloads file.
 func extensionFailure(item string, ctx *context.Context) {
 
 	ctx.Stats.IncrementTotalExtensionsFailed()
@@ -43,6 +46,48 @@ func extensionFailure(item string, ctx *context.Context) {
 
 }
 
-//func getFailedList(extType string) []string {
+// getFailedList reads the .failed-downloads file and returns a list of extensions.
+func getFailedList(extType string) []string {
 
-//}
+	var list []string
+
+	wd, _ := os.Getwd()
+
+	path := filepath.Join(wd, extType, filename)
+
+	file, err := os.OpenFile(path, os.O_RDONLY, 0644)
+	if err != nil {
+		return list
+	}
+	defer file.Close()
+
+	r := bufio.NewReader(file)
+
+	for {
+
+		line, _, err := r.ReadLine()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			continue
+		}
+
+		list = append(list, string(line))
+
+	}
+
+	return list
+
+}
+
+// removeFailedList deletes the .failed-downloads file.
+func removeFailedList(extType string) error {
+
+	wd, _ := os.Getwd()
+
+	path := filepath.Join(wd, extType, filename)
+
+	return os.Remove(path)
+
+}
