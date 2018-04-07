@@ -35,7 +35,8 @@ func ExtractZip(content []byte, length int64, dest string, ctx *context.Context)
 
 	}
 
-	// Used to avoid open file descriptors. TODO: Check it helps.
+	// Used to avoid open file descriptors.
+	// TODO: Check it actually helps.
 	writeFile := func(zf *zip.File) {
 
 		// If this is a Directory, create it and move on.
@@ -99,7 +100,6 @@ func ExtractZip(content []byte, length int64, dest string, ctx *context.Context)
 
 	// Create each File in the Archive.
 	for _, zf := range zr.File {
-
 		writeFile(zf)
 		size = zf.UncompressedSize64
 		ctx.Stats.IncrementTotalFiles()
