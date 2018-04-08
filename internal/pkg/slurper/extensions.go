@@ -16,7 +16,7 @@ import (
 )
 
 const (
-	barTemplate = `{{counters .}} {{bar .}} {{rtime .}} {{percent . }}`
+	barTemplate = `{{counters .}} {{bar .}} {{rtime .}} {{percent .}}`
 )
 
 func fetchExtensions(extensions []string, ctx *context.Context) error {
