@@ -13,6 +13,7 @@ import (
 )
 
 const (
+	// TODO: Check if these are needed. Was useful early on but probably not necessary anymore.
 	wpAllPluginsListURL        = "http://plugins.svn.wordpress.org/"
 	wpAllThemesListURL         = "http://themes.svn.wordpress.org/"
 	wpLatestPluginsRevisionURL = "http://plugins.trac.wordpress.org/log/?format=changelog&stop_rev=HEAD"
@@ -47,37 +48,31 @@ func StartUpdate(ctx *context.Context) {
 	path := filepath.Join(wd, ctx.ExtensionType)
 
 	if utils.DirExists(path) {
-
 		// Dir exists, check if empty
 		if utils.IsDirEmpty(path) {
 			fresh = true
 		} else {
 			fresh = false
 		}
-
 	} else {
 		// No existing slurp folder
 		fresh = true
 	}
 
 	if fresh {
-
 		// Begin fresh Directory Slurp
 		err := newSlurp(ctx)
 		if err != nil {
 			log.Println(err)
 			os.Exit(1)
 		}
-
 	} else {
-
 		// Continue Existing Slurp Directory
 		err := updateSlurp(ctx)
 		if err != nil {
 			log.Println(err)
 			os.Exit(1)
 		}
-
 	}
 
 	// Print Results of Command
@@ -85,6 +80,7 @@ func StartUpdate(ctx *context.Context) {
 
 }
 
+// Begins a fresh slurp.
 func newSlurp(ctx *context.Context) error {
 
 	var extensions []string
@@ -117,6 +113,7 @@ func newSlurp(ctx *context.Context) error {
 
 }
 
+// Updates a current slurp.
 func updateSlurp(ctx *context.Context) error {
 
 	var extensions []string

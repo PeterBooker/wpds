@@ -17,15 +17,14 @@ import (
 	"github.com/peterbooker/wpds/internal/pkg/utils"
 )
 
+// fetchExtensions uses a list of extensions (themes or plugins) to download and extract their archives.
 func fetchExtensions(extensions []string, ctx *context.Context) error {
 
+	// Setup Progress Bar
 	p := mpb.New(
 		mpb.WithWidth(100),
 	)
-
-	total := len(extensions)
-
-	bar := p.AddBar(int64(total),
+	bar := p.AddBar(int64(len(extensions)),
 		mpb.PrependDecorators(
 			decor.CountersNoUnit("%d / %d", 4, 0),
 		),
@@ -44,8 +43,10 @@ func fetchExtensions(extensions []string, ctx *context.Context) error {
 		return err
 	}
 
+	// Use WaitGroup to ensure all Gorountines have finished downloading/extracting.
 	var wg sync.WaitGroup
 
+	// Look through extensions and start a Goroutine to download and extract the files.
 	for _, name := range extensions {
 
 		// Will block if more than max Goroutines already running.
@@ -55,8 +56,9 @@ func fetchExtensions(extensions []string, ctx *context.Context) error {
 
 		go func(name string, ctx *context.Context, wg *sync.WaitGroup) {
 			defer wg.Done()
+			defer bar.Increment()
+
 			getExtension(name, ctx, wg)
-			bar.Increment()
 			<-limiter
 		}(name, ctx, &wg)
 
@@ -70,7 +72,7 @@ func fetchExtensions(extensions []string, ctx *context.Context) error {
 
 }
 
-// getExtension decides which extension data to fetch.
+// getExtension fetches the relevant data for the extension e.g. All files, readme.txt, etc.
 func getExtension(name string, ctx *context.Context, wg *sync.WaitGroup) {
 
 	var file []byte
@@ -80,13 +82,14 @@ func getExtension(name string, ctx *context.Context, wg *sync.WaitGroup) {
 	switch ctx.FileType {
 	case "all":
 
+		// Gets the data of the archive file.
 		file, err = getExtensionZip(name, ctx)
 		if err != nil {
 			extensionFailure(name, ctx)
 			return
 		}
 
-		// TODO: Check return values.
+		// Extracts the archive data to disk.
 		size, err = ExtractZip(file, int64(len(file)), name, ctx)
 		if err != nil {
 			extensionFailure(name, ctx)
@@ -95,13 +98,14 @@ func getExtension(name string, ctx *context.Context, wg *sync.WaitGroup) {
 
 	case "readme":
 
+		// Gets the data of the readme file.
 		file, err = getExtensionReadme(name, ctx)
 		if err != nil {
 			extensionFailure(name, ctx)
 			return
 		}
 
-		// TODO: Check return value.
+		// Writes the readme file to disk.
 		size, err = writeReadme(file, name, ctx)
 		if err != nil {
 			extensionFailure(name, ctx)
@@ -229,12 +233,15 @@ func writeReadme(content []byte, name string, ctx *context.Context) (uint64, err
 	if utils.DirExists(base) {
 		err := utils.RemoveDir(base)
 		if err != nil {
-			log.Printf("Cannot delete extension folder: %s%s\n", ctx.ExtensionType, base)
+			log.Printf("Cannot delete extension folder: %s\n", base)
 		}
 	}
 
 	// Create base dir
-	utils.CreateDir(base)
+	err := utils.CreateDir(base)
+	if err != nil {
+		log.Printf("Cannot create extension folder: %s\n", base)
+	}
 
 	path := filepath.Join(wd, ctx.ExtensionType, name, "readme.txt")
 
@@ -260,7 +267,10 @@ func writeReadme(content []byte, name string, ctx *context.Context) (uint64, err
 		return 0, err
 	}
 
-	fi, _ := f.Stat()
+	fi, err := f.Stat()
+	if err != nil {
+		return 0, err
+	}
 
 	return uint64(fi.Size()), nil
 
