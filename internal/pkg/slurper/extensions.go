@@ -17,13 +17,7 @@ import (
 	"github.com/peterbooker/wpds/internal/pkg/utils"
 )
 
-const (
-//barTemplate = `{{counters .}} {{bar .}} {{rtime .}} {{percent .}}`
-)
-
 func fetchExtensions(extensions []string, ctx *context.Context) error {
-
-	//bar := pb.ProgressBarTemplate(barTemplate).Start(len(extensions))
 
 	p := mpb.New(
 		mpb.WithWidth(100),
