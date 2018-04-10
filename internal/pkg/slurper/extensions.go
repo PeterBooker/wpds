@@ -9,19 +9,37 @@ import (
 	"path/filepath"
 	"sync"
 
+	"github.com/vbauerster/mpb"
+	"github.com/vbauerster/mpb/decor"
+
 	"github.com/peterbooker/wpds/internal/pkg/config"
 	"github.com/peterbooker/wpds/internal/pkg/context"
 	"github.com/peterbooker/wpds/internal/pkg/utils"
-	"gopkg.in/cheggaaa/pb.v2"
 )
 
 const (
-	barTemplate = `{{counters .}} {{bar .}} {{rtime .}} {{percent .}}`
+//barTemplate = `{{counters .}} {{bar .}} {{rtime .}} {{percent .}}`
 )
 
 func fetchExtensions(extensions []string, ctx *context.Context) error {
 
-	bar := pb.ProgressBarTemplate(barTemplate).Start(len(extensions))
+	//bar := pb.ProgressBarTemplate(barTemplate).Start(len(extensions))
+
+	p := mpb.New(
+		mpb.WithWidth(100),
+	)
+
+	total := len(extensions)
+
+	bar := p.AddBar(int64(total),
+		mpb.PrependDecorators(
+			decor.CountersNoUnit("%d / %d", 4, 0),
+		),
+		mpb.AppendDecorators(
+			decor.Percentage(5, decor.DSyncSpace),
+			decor.ETA(4, decor.DSyncSpace),
+		),
+	)
 
 	limiter := make(chan struct{}, ctx.ConcurrentActions)
 
@@ -52,7 +70,7 @@ func fetchExtensions(extensions []string, ctx *context.Context) error {
 
 	wg.Wait()
 
-	bar.Finish()
+	p.Wait()
 
 	return nil
 
