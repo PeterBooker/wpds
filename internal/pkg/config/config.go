@@ -2,7 +2,7 @@ package config
 
 const (
 	name    = "WPDS"
-	version = "0.5.0"
+	version = "0.6.0"
 )
 
 // GetName returns the CLI Name
