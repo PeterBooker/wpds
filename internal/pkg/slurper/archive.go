@@ -26,13 +26,13 @@ func ExtractZip(content []byte, length int64, dest string, ctx *context.Context)
 	if utils.DirExists(path) {
 		err := utils.RemoveDir(path)
 		if err != nil {
-			log.Printf("Cannot delete extension folder: %s%s\n", ctx.ExtensionType, dest)
+			log.Printf("Cannot delete extension folder: %s\n", path)
 		}
 	}
 
 	err = utils.CreateDir(path)
 	if err != nil {
-
+		log.Printf("Cannot create extension folder: %s\n", path)
 	}
 
 	// Used to avoid open file descriptors.
@@ -44,10 +44,7 @@ func ExtractZip(content []byte, length int64, dest string, ctx *context.Context)
 
 			folder := filepath.Join(wd, ctx.ExtensionType, zf.Name)
 
-			err := utils.CreateDir(folder)
-			if err != nil {
-				// ignore errors
-			}
+			utils.CreateDir(folder)
 
 			return
 
@@ -64,10 +61,7 @@ func ExtractZip(content []byte, length int64, dest string, ctx *context.Context)
 		dt := filepath.Dir(path)
 
 		// Make the directory required by this File.
-		err = utils.CreateDir(dt)
-		if err != nil {
-			// ignore error
-		}
+		utils.CreateDir(dt)
 
 		// Create File.
 		f, err := os.Create(path)
