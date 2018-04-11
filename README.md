@@ -63,9 +63,9 @@ But subsequent updates are smarter. The script tracks the SVN revision number of
 
 ### How much disk space do I need?
 
-As of September 2017:
+As of April 2018:
 
-69607 Plugins- extracting 884,056 folders, 2,321,090 files, taking up 34.6 GB of space.
+73,629 Plugins- extracting 518,453 folders, 2,690,570 files, taking up 40.7 GB of space.
 
 ### Something went wrong, how do I do a partial update?
 
