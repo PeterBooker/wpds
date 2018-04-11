@@ -77,7 +77,7 @@ func getExtension(name string, ctx *context.Context, wg *sync.WaitGroup) {
 			data, err = getExtensionZip(name, ctx)
 			return err
 		}
-		err := retry.Do(fetch, retry.Timeout(300*time.Second), retry.MaxTries(3), retry.Sleep(5*time.Second))
+		err := retry.Do(fetch, retry.Timeout(600*time.Second), retry.MaxTries(3), retry.Sleep(5*time.Second))
 		if err != nil {
 			extensionFailure(name, ctx)
 			return
@@ -97,7 +97,7 @@ func getExtension(name string, ctx *context.Context, wg *sync.WaitGroup) {
 			data, err = getExtensionReadme(name, ctx)
 			return err
 		}
-		err := retry.Do(fetch, retry.Timeout(300*time.Second), retry.MaxTries(3), retry.Sleep(5*time.Second))
+		err := retry.Do(fetch, retry.Timeout(600*time.Second), retry.MaxTries(3), retry.Sleep(5*time.Second))
 		if err != nil {
 			extensionFailure(name, ctx)
 			return
@@ -120,7 +120,7 @@ func getExtension(name string, ctx *context.Context, wg *sync.WaitGroup) {
 // getExtensionZip gets the extension archive.
 func getExtensionZip(name string, ctx *context.Context) ([]byte, error) {
 
-	client := NewClient(120, ctx.ConcurrentActions)
+	client := NewClient(180, ctx.ConcurrentActions)
 
 	var URL string
 	var content []byte
@@ -173,7 +173,7 @@ func getExtensionZip(name string, ctx *context.Context) ([]byte, error) {
 // getExtensionReadme gets the extension readme.
 func getExtensionReadme(name string, ctx *context.Context) ([]byte, error) {
 
-	client := NewClient(120, ctx.ConcurrentActions)
+	client := NewClient(180, ctx.ConcurrentActions)
 
 	var URL string
 	var content []byte
