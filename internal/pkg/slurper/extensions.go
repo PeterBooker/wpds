@@ -8,7 +8,9 @@ import (
 	"os"
 	"path/filepath"
 	"sync"
+	"time"
 
+	retry "github.com/giantswarm/retry-go"
 	"github.com/peterbooker/wpds/internal/pkg/config"
 	"github.com/peterbooker/wpds/internal/pkg/context"
 	"github.com/peterbooker/wpds/internal/pkg/utils"
@@ -63,7 +65,7 @@ func fetchExtensions(extensions []string, ctx *context.Context) error {
 // getExtension fetches the relevant data for the extension e.g. All files, readme.txt, etc.
 func getExtension(name string, ctx *context.Context, wg *sync.WaitGroup) {
 
-	var file []byte
+	var data []byte
 	var err error
 	var size uint64
 
@@ -71,14 +73,18 @@ func getExtension(name string, ctx *context.Context, wg *sync.WaitGroup) {
 	case "all":
 
 		// Gets the data of the archive file.
-		file, err = getExtensionZip(name, ctx)
+		fetch := func() error {
+			data, err = getExtensionZip(name, ctx)
+			return err
+		}
+		err := retry.Do(fetch, retry.Timeout(300*time.Second), retry.MaxTries(3), retry.Sleep(5*time.Second))
 		if err != nil {
 			extensionFailure(name, ctx)
 			return
 		}
 
 		// Extracts the archive data to disk.
-		size, err = ExtractZip(file, int64(len(file)), name, ctx)
+		size, err = ExtractZip(data, int64(len(data)), name, ctx)
 		if err != nil {
 			extensionFailure(name, ctx)
 			return
@@ -87,14 +93,18 @@ func getExtension(name string, ctx *context.Context, wg *sync.WaitGroup) {
 	case "readme":
 
 		// Gets the data of the readme file.
-		file, err = getExtensionReadme(name, ctx)
+		fetch := func() error {
+			data, err = getExtensionReadme(name, ctx)
+			return err
+		}
+		err := retry.Do(fetch, retry.Timeout(300*time.Second), retry.MaxTries(3), retry.Sleep(5*time.Second))
 		if err != nil {
 			extensionFailure(name, ctx)
 			return
 		}
 
 		// Writes the readme file to disk.
-		size, err = writeReadme(file, name, ctx)
+		size, err = writeReadme(data, name, ctx)
 		if err != nil {
 			extensionFailure(name, ctx)
 			return
