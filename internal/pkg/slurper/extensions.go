@@ -9,30 +9,21 @@ import (
 	"path/filepath"
 	"sync"
 
-	"github.com/vbauerster/mpb"
-	"github.com/vbauerster/mpb/decor"
-
 	"github.com/peterbooker/wpds/internal/pkg/config"
 	"github.com/peterbooker/wpds/internal/pkg/context"
 	"github.com/peterbooker/wpds/internal/pkg/utils"
+	pb "gopkg.in/cheggaaa/pb.v2"
 )
+
+const tmpl = `{{counters .}} {{bar . "[" "=" ">" "-" "]"}} {{rtime .}} {{percent .}}`
 
 // fetchExtensions uses a list of extensions (themes or plugins) to download and extract their archives.
 func fetchExtensions(extensions []string, ctx *context.Context) error {
 
-	// Setup Progress Bar
-	p := mpb.New(
-		mpb.WithWidth(100),
-	)
-	bar := p.AddBar(int64(len(extensions)),
-		mpb.PrependDecorators(
-			decor.CountersNoUnit("%d / %d", 4, 0),
-		),
-		mpb.AppendDecorators(
-			decor.Percentage(5, decor.DSyncSpace),
-			decor.ETA(4, decor.DSyncSpace),
-		),
-	)
+	// Use WaitGroup to ensure all Gorountines have finished downloading/extracting.
+	var wg sync.WaitGroup
+
+	bar := pb.ProgressBarTemplate(tmpl).Start(len(extensions))
 
 	limiter := make(chan struct{}, ctx.ConcurrentActions)
 
@@ -42,9 +33,6 @@ func fetchExtensions(extensions []string, ctx *context.Context) error {
 	if err != nil {
 		return err
 	}
-
-	// Use WaitGroup to ensure all Gorountines have finished downloading/extracting.
-	var wg sync.WaitGroup
 
 	// Look through extensions and start a Goroutine to download and extract the files.
 	for _, name := range extensions {
@@ -66,7 +54,7 @@ func fetchExtensions(extensions []string, ctx *context.Context) error {
 
 	wg.Wait()
 
-	p.Wait()
+	bar.Finish()
 
 	return nil
 
