@@ -14,6 +14,7 @@ const (
 )
 
 // extensionFailure appends an extension name to the .failed-downloads file.
+// TODO: Create a single buffered writer for this, to avoid many Goroutines writing to a single file.
 func extensionFailure(name string, ctx *context.Context) {
 
 	ctx.Stats.IncrementTotalExtensionsFailed()
