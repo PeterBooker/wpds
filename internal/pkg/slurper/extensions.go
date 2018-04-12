@@ -9,6 +9,7 @@ import (
 	"path/filepath"
 	"sync"
 	"time"
+	"unicode/utf8"
 
 	retry "github.com/giantswarm/retry-go"
 	"github.com/peterbooker/wpds/internal/pkg/config"
@@ -69,6 +70,12 @@ func getExtension(name string, ctx *context.Context, wg *sync.WaitGroup) {
 	var err error
 	var size uint64
 
+	// isExtensionNameValid?
+	if !isValidName(name) {
+		ctx.Stats.IncrementTotalExtensionsClosed()
+		return
+	}
+
 	switch ctx.FileType {
 	case "all":
 
@@ -80,6 +87,12 @@ func getExtension(name string, ctx *context.Context, wg *sync.WaitGroup) {
 		err := retry.Do(fetch, retry.Timeout(600*time.Second), retry.MaxTries(3), retry.Sleep(5*time.Second))
 		if err != nil {
 			extensionFailure(name, ctx)
+			return
+		}
+
+		// Received 404 response, not an error but we have no data so no more actions to take.
+		if len(data) == 0 {
+			ctx.Stats.IncrementTotalExtensionsClosed()
 			return
 		}
 
@@ -100,6 +113,12 @@ func getExtension(name string, ctx *context.Context, wg *sync.WaitGroup) {
 		err := retry.Do(fetch, retry.Timeout(600*time.Second), retry.MaxTries(3), retry.Sleep(5*time.Second))
 		if err != nil {
 			extensionFailure(name, ctx)
+			return
+		}
+
+		// Received 404 response, not an error but we have no data so no more actions to take.
+		if len(data) == 0 {
+			ctx.Stats.IncrementTotalExtensionsClosed()
 			return
 		}
 
@@ -149,9 +168,8 @@ func getExtensionZip(name string, ctx *context.Context) ([]byte, error) {
 
 	if resp.StatusCode != 200 {
 
-		// Code 404 is acceptable, means the plugin/theme is no longer available.
+		// Code 404 is acceptable, it means the plugin/theme is no longer available.
 		if resp.StatusCode == 404 {
-			ctx.Stats.IncrementTotalExtensionsClosed()
 			return content, nil
 		}
 
@@ -204,7 +222,6 @@ func getExtensionReadme(name string, ctx *context.Context) ([]byte, error) {
 
 		// Code 404 is acceptable, means the plugin/theme is no longer available.
 		if resp.StatusCode == 404 {
-			ctx.Stats.IncrementTotalExtensionsClosed()
 			return content, nil
 		}
 
@@ -272,4 +289,9 @@ func writeReadme(content []byte, name string, ctx *context.Context) (uint64, err
 
 	return uint64(fi.Size()), nil
 
+}
+
+// isValidName checks if the extension name is utf8 encoded, anything not will have been closed in the repository.
+func isValidName(name string) bool {
+	return utf8.Valid([]byte(name))
 }
