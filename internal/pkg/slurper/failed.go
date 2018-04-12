@@ -47,6 +47,21 @@ func extensionFailure(name string, ctx *context.Context) {
 
 }
 
+// failuresExist checks if the .failed-downloads file exists.
+func failuresExist(extType string) bool {
+
+	wd, _ := os.Getwd()
+
+	path := filepath.Join(wd, extType, filename)
+
+	if _, err := os.Stat(path); err == nil {
+		return true
+	} else {
+		return false
+	}
+
+}
+
 // getFailedList reads the .failed-downloads file and returns a list of extensions.
 func getFailedList(extType string) []string {
 

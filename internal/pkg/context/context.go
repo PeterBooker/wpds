@@ -15,6 +15,7 @@ type Context struct {
 	CurrentRevision   int
 	LatestRevision    int
 	WorkingDirectory  string
+	FailedList        []string
 	Stats             *stats.Stats
 }
 

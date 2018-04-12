@@ -156,6 +156,25 @@ func updateSlurp(ctx *context.Context) error {
 		return err
 	}
 
+	// Check for failed downloads and retry.
+	var failures []string
+
+	if failuresExist(ctx.ExtensionType) {
+
+		failures = getFailedList(ctx.ExtensionType)
+		err := removeFailedList(ctx.ExtensionType)
+		if err != nil {
+			log.Printf("Failed to delete the %s .failed-downloads file.\n", ctx.ExtensionType)
+		}
+
+		log.Println("Failed downloads detected. Attempting to download again.")
+		err = fetchExtensions(failures, ctx)
+		if err != nil {
+			return err
+		}
+
+	}
+
 	return nil
 
 }

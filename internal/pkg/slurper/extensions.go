@@ -55,6 +55,31 @@ func fetchExtensions(extensions []string, ctx *context.Context) error {
 
 	}
 
+	// If any previous downloads failed, retry the failures.
+	if len(ctx.FailedList) > 0 {
+
+		t := bar.Total()
+		bar.SetTotal(t + int64(len(ctx.FailedList)))
+
+		for _, name := range extensions {
+
+			// Will block if more than max Goroutines already running.
+			limiter <- struct{}{}
+
+			wg.Add(1)
+
+			go func(name string, ctx *context.Context, wg *sync.WaitGroup) {
+				defer wg.Done()
+				defer bar.Increment()
+
+				getExtension(name, ctx, wg)
+				<-limiter
+			}(name, ctx, &wg)
+
+		}
+
+	}
+
 	wg.Wait()
 
 	bar.Finish()
