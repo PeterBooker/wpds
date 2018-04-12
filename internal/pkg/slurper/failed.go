@@ -14,7 +14,7 @@ const (
 )
 
 // extensionFailure appends an extension name to the .failed-downloads file.
-func extensionFailure(item string, ctx *context.Context) {
+func extensionFailure(name string, ctx *context.Context) {
 
 	ctx.Stats.IncrementTotalExtensionsFailed()
 
@@ -37,7 +37,7 @@ func extensionFailure(item string, ctx *context.Context) {
 
 	defer f.Close()
 
-	_, err = f.WriteString(item + "\n")
+	_, err = f.WriteString(name + "\n")
 	if err != nil {
 		return
 	}
