@@ -15,7 +15,7 @@ func init() {
 
 }
 
-// Properly encodes the URL for compatibility with special characters
+// EncodeURL properly encodes the URL for compatibility with special characters
 // e.g. 新浪微博 and ЯндексФотки
 func EncodeURL(rawURL string) string {
 
