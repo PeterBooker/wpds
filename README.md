@@ -17,21 +17,13 @@ Download the relevant file for your operating system from the [releases](https:/
 
 ## Examples
 
-### Download Plugin Directory
-
-```
-wpds download plugins
-```
-
-This will download the entire plugin directory.
-
-### Update Plugin Directory
+### Slurp Plugin Directory
 
 ```
 wpds update plugins
 ```
 
-This will update the existing files using the latest revision found in `/plugins/.last-revision`.
+This will start a new slurp or continue the existing slurp using the latest revision found in `/plugins/.last-revision`.
 
 ## Features
 
