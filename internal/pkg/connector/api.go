@@ -108,7 +108,7 @@ func (api *API) GetFullExtensionsList(ctx *context.Context) ([]string, error) {
 	bBytes, err := ioutil.ReadAll(resp.Body)
 	bString := string(bBytes)
 
-	matches := regexAPIFullExtensionsList.FindAllStringSubmatch(bString, 1)
+	matches := regexAPIFullExtensionsList.FindAllStringSubmatch(bString, -1)
 
 	// Add all matches to extension list
 	for _, extension := range matches {
