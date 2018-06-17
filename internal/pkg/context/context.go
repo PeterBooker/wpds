@@ -1,6 +1,8 @@
 package context
 
 import (
+	"net/http"
+
 	"github.com/peterbooker/wpds/internal/pkg/stats"
 )
 
@@ -17,6 +19,7 @@ type Context struct {
 	WorkingDirectory  string
 	FailedList        []string
 	Stats             *stats.Stats
+	Client            *http.Client
 }
 
 // SearchContext contains data required for Searching
