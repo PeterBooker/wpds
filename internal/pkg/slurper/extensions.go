@@ -23,6 +23,8 @@ const tmpl = `{{counters .}} {{bar . "[" "=" ">" "-" "]"}} {{rtime .}} {{percent
 // fetchExtensions uses a list of extensions (themes or plugins) to download and extract their archives.
 func fetchExtensions(extensions []string, ctx *context.Context) error {
 
+	ctx.Client = NewClient(180, ctx.ConcurrentActions)
+
 	// Use WaitGroup to ensure all Gorountines have finished downloading/extracting.
 	var wg sync.WaitGroup
 
@@ -48,8 +50,7 @@ func fetchExtensions(extensions []string, ctx *context.Context) error {
 		go func(name string, ctx *context.Context, wg *sync.WaitGroup) {
 			defer wg.Done()
 			defer bar.Increment()
-
-			getExtension(name, ctx, wg)
+			getExtension(name, ctx)
 			<-limiter
 		}(name, ctx, &wg)
 
@@ -67,15 +68,12 @@ func fetchExtensions(extensions []string, ctx *context.Context) error {
 			limiter <- struct{}{}
 
 			wg.Add(1)
-
 			go func(name string, ctx *context.Context, wg *sync.WaitGroup) {
 				defer wg.Done()
 				defer bar.Increment()
-
-				getExtension(name, ctx, wg)
+				getExtension(name, ctx)
 				<-limiter
 			}(name, ctx, &wg)
-
 		}
 
 	}
@@ -89,7 +87,7 @@ func fetchExtensions(extensions []string, ctx *context.Context) error {
 }
 
 // getExtension fetches the relevant data for the extension e.g. All files, readme.txt, etc.
-func getExtension(name string, ctx *context.Context, wg *sync.WaitGroup) {
+func getExtension(name string, ctx *context.Context) {
 
 	var data []byte
 	var err error
@@ -128,6 +126,8 @@ func getExtension(name string, ctx *context.Context, wg *sync.WaitGroup) {
 			return
 		}
 
+		break
+
 	case "readme":
 
 		// Gets the data of the readme file.
@@ -154,17 +154,19 @@ func getExtension(name string, ctx *context.Context, wg *sync.WaitGroup) {
 			return
 		}
 
+		break
+
 	}
 
 	ctx.Stats.IncrementTotalExtensions()
 	ctx.Stats.IncreaseTotalSize(size)
 
+	return
+
 }
 
 // getExtensionZip gets the extension archive.
 func getExtensionZip(name string, ctx *context.Context) ([]byte, error) {
-
-	client := NewClient(180, ctx.ConcurrentActions)
 
 	var URL string
 	var content []byte
@@ -185,7 +187,7 @@ func getExtensionZip(name string, ctx *context.Context) ([]byte, error) {
 	// Dynamically set User-Agent from config
 	req.Header.Set("User-Agent", config.GetName()+"/"+config.GetVersion())
 
-	resp, err := client.Do(req)
+	resp, err := ctx.Client.Do(req)
 	if err != nil {
 		return content, err
 	}
@@ -209,14 +211,12 @@ func getExtensionZip(name string, ctx *context.Context) ([]byte, error) {
 		return content, err
 	}
 
-	return content, err
+	return content, nil
 
 }
 
 // getExtensionReadme gets the extension readme.
 func getExtensionReadme(name string, ctx *context.Context) ([]byte, error) {
-
-	client := NewClient(180, ctx.ConcurrentActions)
 
 	var URL string
 	var content []byte
@@ -237,7 +237,7 @@ func getExtensionReadme(name string, ctx *context.Context) ([]byte, error) {
 	// Dynamically set User-Agent from config
 	req.Header.Set("User-Agent", config.GetName()+"/"+config.GetVersion())
 
-	resp, err := client.Do(req)
+	resp, err := ctx.Client.Do(req)
 	if err != nil {
 		return content, err
 	}

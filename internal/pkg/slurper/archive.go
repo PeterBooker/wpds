@@ -41,13 +41,9 @@ func ExtractZip(content []byte, length int64, dest string, ctx *context.Context)
 
 		// If this is a Directory, create it and move on.
 		if zf.FileInfo().IsDir() {
-
 			folder := filepath.Join(wd, ctx.ExtensionType, zf.Name)
-
 			utils.CreateDir(folder)
-
 			return
-
 		}
 
 		fr, err := zf.Open()
@@ -82,7 +78,7 @@ func ExtractZip(content []byte, length int64, dest string, ctx *context.Context)
 
 		err = f.Close()
 		if err != nil {
-			log.Printf("Problem writing contents to file <%s>: %s\n", path, err)
+			log.Printf("Problem closing file <%s>: %s\n", path, err)
 			return
 		}
 
