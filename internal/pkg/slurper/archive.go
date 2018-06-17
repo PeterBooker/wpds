@@ -7,7 +7,6 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	"strings"
 
 	"github.com/peterbooker/wpds/internal/pkg/context"
 	"github.com/peterbooker/wpds/internal/pkg/utils"
@@ -53,7 +52,7 @@ func ExtractZip(content []byte, length int64, dest string, ctx *context.Context)
 		}
 		defer fr.Close()
 
-		path := strings.Replace(filepath.Join(wd, ctx.ExtensionType, zf.Name), "/", string(filepath.Separator), -1)
+		path := filepath.FromSlash(filepath.Join(wd, ctx.ExtensionType, zf.Name))
 		dt := filepath.Dir(path)
 
 		// Make the directory required by this File.
