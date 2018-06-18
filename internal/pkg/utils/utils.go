@@ -20,9 +20,9 @@ func EncodeURL(rawURL string) string {
 
 // CheckClose is used to check the return from Close in a defer statement.
 func CheckClose(c io.Closer, err *error) {
-	cerr := c.Close()
+	cErr := c.Close()
 	if *err == nil {
-		*err = cerr
+		*err = cErr
 	}
 }
 
@@ -31,10 +31,9 @@ func DrainAndClose(rd io.ReadCloser, err *error) {
 	if rd == nil {
 		return
 	}
-
 	_, _ = io.Copy(ioutil.Discard, rd)
-	cerr := rd.Close()
+	cErr := rd.Close()
 	if err != nil && *err == nil {
-		*err = cerr
+		*err = cErr
 	}
 }
