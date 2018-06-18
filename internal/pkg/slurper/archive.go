@@ -25,13 +25,11 @@ func ExtractZip(name string, ctx *context.Context) (uint64, error) {
 
 	fi, err := file.Stat()
 	if err != nil {
-		file.Close()
 		return 0, err
 	}
 
 	zr, err := zip.NewReader(file, fi.Size())
 	if err != nil {
-		file.Close()
 		return 0, err
 	}
 
