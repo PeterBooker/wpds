@@ -2,7 +2,6 @@ package slurper
 
 import (
 	"archive/zip"
-	"bytes"
 	"io"
 	"log"
 	"os"
@@ -13,44 +12,46 @@ import (
 )
 
 // ExtractZip extracts the archive containing extension data.
-func ExtractZip(content []byte, length int64, dest string, ctx *context.Context) (uint64, error) {
+func ExtractZip(name string, ctx *context.Context) (uint64, error) {
 
-	zr, err := zip.NewReader(bytes.NewReader(content), length)
+	var err error
+
+	fname := filepath.Join(ctx.WorkingDirectory, ctx.ExtensionType, name, "plugin.zip")
+	file, err := os.Open(fname)
 	if err != nil {
 		return 0, err
 	}
+	defer utils.CheckClose(file, &err)
 
-	path := filepath.Join(wd, ctx.ExtensionType, dest)
-
-	if utils.DirExists(path) {
-		err := utils.RemoveDir(path)
-		if err != nil {
-			log.Printf("Cannot delete extension folder: %s\n", path)
-		}
+	fi, err := file.Stat()
+	if err != nil {
+		file.Close()
+		return 0, err
 	}
 
-	err = utils.CreateDir(path)
+	zr, err := zip.NewReader(file, fi.Size())
 	if err != nil {
-		log.Printf("Cannot create extension folder: %s\n", path)
+		file.Close()
+		return 0, err
 	}
 
 	// Used to avoid open file descriptors.
 	// TODO: Check it actually helps.
-	writeFile := func(zf *zip.File) {
+	writeFile := func(zf *zip.File) error {
 
 		// If this is a Directory, create it and move on.
 		if zf.FileInfo().IsDir() {
 			folder := filepath.Join(wd, ctx.ExtensionType, zf.Name)
 			utils.CreateDir(folder)
-			return
+			return nil
 		}
 
 		fr, err := zf.Open()
 		if err != nil {
 			log.Printf("Unable to read file: %s\n", zf.Name)
-			return
+			return err
 		}
-		defer fr.Close()
+		defer utils.CheckClose(fr, &err)
 
 		path := filepath.FromSlash(filepath.Join(wd, ctx.ExtensionType, zf.Name))
 		dt := filepath.Dir(path)
@@ -62,26 +63,18 @@ func ExtractZip(content []byte, length int64, dest string, ctx *context.Context)
 		f, err := os.Create(path)
 		if err != nil {
 			log.Printf("Unable to create file: %s\n", path)
-			return
+			return err
 		}
-
-		defer f.Close()
+		defer utils.CheckClose(f, &err)
 
 		// Copy contents to the File.
 		_, err = io.Copy(f, fr)
 		if err != nil {
 			log.Printf("Problem writing contents to file <%s>: %s\n", path, err)
-			f.Close()
-			return
+			return err
 		}
 
-		err = f.Close()
-		if err != nil {
-			log.Printf("Problem closing file <%s>: %s\n", path, err)
-			return
-		}
-
-		return
+		return err
 
 	}
 
@@ -89,7 +82,10 @@ func ExtractZip(content []byte, length int64, dest string, ctx *context.Context)
 
 	// Create each File in the Archive.
 	for _, zf := range zr.File {
-		writeFile(zf)
+		err := writeFile(zf)
+		if err != nil {
+			log.Printf("Error writing file: %s\n", err)
+		}
 		size += zf.UncompressedSize64
 		ctx.Stats.IncrementTotalFiles()
 	}

@@ -2,6 +2,7 @@ package slurper
 
 import (
 	"fmt"
+	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -29,7 +30,6 @@ func fetchExtensions(extensions []string, ctx *context.Context) error {
 	var wg sync.WaitGroup
 
 	bar := pb.ProgressBarTemplate(tmpl).Start(len(extensions))
-
 	limiter := make(chan struct{}, ctx.ConcurrentActions)
 
 	// Make Plugins Dir ready for extracting plugins
@@ -104,26 +104,33 @@ func getExtension(name string, ctx *context.Context) {
 
 		// Gets the data of the archive file.
 		fetch := func() error {
-			data, err = getExtensionZip(name, ctx)
+			err = getExtensionZip(name, ctx)
 			return err
 		}
-		err := retry.Do(fetch, retry.Timeout(600*time.Second), retry.MaxTries(3), retry.Sleep(5*time.Second))
+		err := retry.Do(fetch, retry.Timeout(300*time.Second), retry.MaxTries(3), retry.Sleep(5*time.Second))
 		if err != nil {
 			extensionFailure(name, ctx)
 			return
 		}
 
 		// Received 404 response, not an error but we have no data so no more actions to take.
-		if len(data) == 0 {
+		fpath := filepath.Join(ctx.WorkingDirectory, ctx.ExtensionType, name, "plugin.zip")
+		if _, err := os.Stat(fpath); os.IsNotExist(err) {
 			ctx.Stats.IncrementTotalExtensionsClosed()
 			return
 		}
 
 		// Extracts the archive data to disk.
-		size, err = ExtractZip(data, int64(len(data)), name, ctx)
+		size, err = ExtractZip(name, ctx)
 		if err != nil {
 			extensionFailure(name, ctx)
 			return
+		}
+
+		// Remove temporary archive
+		err = os.Remove(fpath)
+		if err != nil {
+			log.Printf("Could not remove temp zip archive for (%s) %s\n", ctx.ExtensionType, name)
 		}
 
 		break
@@ -166,10 +173,10 @@ func getExtension(name string, ctx *context.Context) {
 }
 
 // getExtensionZip gets the extension archive.
-func getExtensionZip(name string, ctx *context.Context) ([]byte, error) {
+func getExtensionZip(name string, ctx *context.Context) error {
 
 	var URL string
-	var content []byte
+	var err error
 
 	switch ctx.ExtensionType {
 	case "plugins":
@@ -181,7 +188,7 @@ func getExtensionZip(name string, ctx *context.Context) ([]byte, error) {
 	req, err := http.NewRequest("GET", URL, nil)
 	if err != nil {
 		log.Println(err)
-		return content, err
+		return err
 	}
 
 	// Dynamically set User-Agent from config
@@ -189,30 +196,48 @@ func getExtensionZip(name string, ctx *context.Context) ([]byte, error) {
 
 	resp, err := ctx.Client.Do(req)
 	if err != nil {
-		return content, err
+		return err
 	}
-	defer resp.Body.Close()
+	defer utils.CheckClose(resp.Body, &err)
 
 	if resp.StatusCode != 200 {
 
 		// Code 404 is acceptable, it means the plugin/theme is no longer available.
 		if resp.StatusCode == 404 {
-			return content, nil
+			return nil
 		}
 
 		log.Printf("Downloading the extension '%s' failed. Response code: %d\n", name, resp.StatusCode)
-
-		return content, err
-
+		return err
 	}
 
-	content, err = ioutil.ReadAll(resp.Body)
+	path := filepath.Join(ctx.WorkingDirectory, ctx.ExtensionType, name)
+
+	if utils.DirExists(path) {
+		err := utils.RemoveDir(path)
+		if err != nil {
+			log.Printf("Cannot delete extension folder: %s\n", path)
+		}
+	}
+
+	err = utils.CreateDir(path)
 	if err != nil {
-		return content, err
+		log.Printf("Cannot create extension folder: %s\n", path)
 	}
 
-	return content, nil
+	fname := filepath.Join(ctx.WorkingDirectory, ctx.ExtensionType, name, "plugin.zip")
+	file, err := os.Create(fname)
+	if err != nil {
+		return err
+	}
+	defer utils.CheckClose(file, &err)
 
+	_, err = io.Copy(file, resp.Body)
+	if err != nil {
+		return err
+	}
+
+	return err
 }
 
 // getExtensionReadme gets the extension readme.
